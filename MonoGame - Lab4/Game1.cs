@@ -7,15 +7,16 @@ using System.Diagnostics;
 
 namespace MonoGame___Lab4 {
    public class Game1 : Game {
-      public static Random random = new Random();
-      public static int MAPSIZE = 40;
+      private static Random random = new Random();
+      public readonly static int MAPSIZE = 40;
       private static Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
+      private bool gameOver;
       private GraphicsDeviceManager graphics;
       private SpriteBatch spriteBatch;
       private Camera cam;
-      private Character main,test;
-      private TexturePlane plane,plane2;
-      private List<Character> obstacles = new List<Character>();
+      private Character main;
+      private TexturePlane plane, plane2;
+      private List<Obstacles> obstacles = new List<Obstacles>();
       private Model bullet;
       private float timeCount;
 
@@ -23,6 +24,8 @@ namespace MonoGame___Lab4 {
          graphics = new GraphicsDeviceManager(this);
          Content.RootDirectory = "Content";
       }
+
+      public bool GameOver { get { return gameOver; } set { gameOver = value; } }
 
       protected override void Initialize() {
          base.Initialize();
@@ -46,15 +49,16 @@ namespace MonoGame___Lab4 {
       }
 
       protected override void Update(GameTime gameTime) {
-         //get frame rate and count time
-         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-         timeCount += dt;
-
          if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-         //bullet respwan rate 
-         if (timeCount > 0.5) {
+         if (!gameOver) {
+            //get frame rate and count time
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            timeCount += dt;
+
+            //bullet respwan rate 
+            if (timeCount > 0.5) {
             Spawner(bullet, main.Position, rotation,new Vector2(3,5));
             timeCount = 0; //reset timer
          }
@@ -66,11 +70,13 @@ namespace MonoGame___Lab4 {
 
          RemoveOutOfRange(); //remove bullets out of range
 
-         cam.Update(main.Position);
-         main.Update(gameTime);
-         plane.Update(main.Position);
-         plane2.Update(main.Position);
-         base.Update(gameTime);
+
+            cam.Update(main.Position);
+            main.Update(gameTime);
+            plane.Update(main.Position);
+            plane2.Update(main.Position);
+            base.Update(gameTime);
+         }
       }
 
       protected override void Draw(GameTime gameTime) {
@@ -79,7 +85,7 @@ namespace MonoGame___Lab4 {
          plane2.Draw(cam);
          main.Draw(cam);
          foreach(var ob in obstacles) {
-            ob.Draw(cam);
+            ob.Draw(cam,main);
          }
          
          base.Draw(gameTime);
@@ -96,7 +102,7 @@ namespace MonoGame___Lab4 {
             var randSpeed = random.Next(20, 40);
             var iniPos = new Vector3(targetPos.X + randistanceX, randistanceY, targetPos.Z + randistanceZ);
             //instantiate bullets
-            obstacles.Add(new Character(this, model, iniPos, randSpeed, 0.2f, rotation, ModelType.obstacle));
+            obstacles.Add(new Obstacles(this, model, iniPos, randSpeed, 0.2f, rotation));
          }
       }
 

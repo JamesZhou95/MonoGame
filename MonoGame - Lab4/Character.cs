@@ -8,15 +8,15 @@ namespace MonoGame___Lab4 {
    enum ModelType { main,obstacle}
    class Character: GameComponent {
       private Model objModel;
-      private Matrix worldMatrix;
+      private Matrix worldMatrix, orientation;
       private Vector3 position;
       private Vector3 rotation;
       private Vector3 lookAt;
       private float scaleSize;
       private float moveSpeed;
       private ModelType type;
-      private Game1 temp;
-      BoundingBox collider;
+      private BoundingBox collider;
+      private Game1 game;
 
       public Vector3 Position {
          get { return position; }
@@ -38,14 +38,11 @@ namespace MonoGame___Lab4 {
       public Character(Game1 game,Model model, Vector3 pos,float speed,float scale,Matrix world, ModelType mType) : base(game) {
          objModel = model;
          position = pos;
-         worldMatrix = world;
+         orientation = world;
          moveSpeed = speed;
          type = mType;
          scaleSize = scale;
-         temp = game;
-
-         //create custom collider for collision detection
-         collider = new BoundingBox(new Vector3(pos.X + 1.5f, pos.Y, pos.Z - 0.5f), new Vector3(pos.X - 0.5f, pos.Y+2f, pos.Z+1.5f));       
+         this.game = game;
       }
 
       //move character to position
@@ -118,12 +115,23 @@ namespace MonoGame___Lab4 {
 
       public override void Update(GameTime gameTime) {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-         if(type == ModelType.main)       //use different movement for different model type
+         if (type == ModelType.main) {    //use different movement for different model type
             MainInput(dt);
+
+            //create custom collider for collision detection
+            collider = new BoundingBox(new Vector3(position.X + 1.5f, position.Y, position.Z - 0.5f),
+               new Vector3(position.X - 0.5f, position.Y + 2f, position.Z + 1.5f));
+         }
          if(type == ModelType.obstacle)
             Fire(dt);
 
          base.Update(gameTime);
+      }
+
+      public void onCollision(BoundingSphere other) {
+         if (collider.Intersects(other)) {
+            game.GameOver = true;
+         }
       }
 
       public void Draw(Camera camera) {
@@ -133,11 +141,12 @@ namespace MonoGame___Lab4 {
          foreach (var mesh in objModel.Meshes) {
             foreach (BasicEffect effect in mesh.Effects) {
                effect.EnableDefaultLighting();
-               //isCollided(mesh.BoundingSphere);
 
                var scale = Matrix.CreateScale(scaleSize);
-               effect.World = transforms[mesh.ParentBone.Index] * scale * worldMatrix * Matrix.CreateRotationY(Rotation.Y) 
+               worldMatrix = transforms[mesh.ParentBone.Index] * scale * orientation * Matrix.CreateRotationY(Rotation.Y)
                  * Matrix.CreateTranslation(Position);
+
+               effect.World = worldMatrix;
 
                camera.Display(effect);
             }
