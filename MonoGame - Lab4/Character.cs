@@ -2,11 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
-using System;
+
 
 namespace MonoGame___Lab4 {
-   enum ModelType { main,obstacle}
-   class Character: GameComponent {
+   enum ModelType { main, obstacle }
+   class Character : GameComponent {
       private Model objModel;
       private Matrix worldMatrix, orientation;
       private Vector3 position;
@@ -15,7 +15,7 @@ namespace MonoGame___Lab4 {
       private float scaleSize;
       private float moveSpeed;
       private ModelType type;
-      private BoundingBox collider;
+      private BoundingSphere collider = new BoundingSphere();
       private Game1 game;
 
       public Vector3 Position {
@@ -35,7 +35,7 @@ namespace MonoGame___Lab4 {
       }
 
       //create new character/obstacles
-      public Character(Game1 game,Model model, Vector3 pos,float speed,float scale,Matrix world, ModelType mType) : base(game) {
+      public Character(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world, ModelType mType) : base(game) {
          objModel = model;
          position = pos;
          orientation = world;
@@ -57,7 +57,7 @@ namespace MonoGame___Lab4 {
          Vector3 movement = new Vector3(amount.X, amount.Y, amount.Z);
          movement = Vector3.Transform(movement, rotate);
          var previewPos = position + movement;
-         previewPos.X = MathHelper.Clamp(previewPos.X, -Game1.MAPSIZE*0.95f, Game1.MAPSIZE * 0.95f);
+         previewPos.X = MathHelper.Clamp(previewPos.X, -Game1.MAPSIZE * 0.95f, Game1.MAPSIZE * 0.95f);
          return previewPos;
       }
 
@@ -81,7 +81,7 @@ namespace MonoGame___Lab4 {
             moveVector.Z = 1;
          if (ks.IsKeyDown(Keys.S))
             moveVector.Z = -1;
-        
+
          if (moveVector != Vector3.Zero) {
             if (ks.IsKeyDown(Keys.A))
                rotation.Y += 0.03f;
@@ -108,29 +108,25 @@ namespace MonoGame___Lab4 {
       //moving obstacles(bullets)
       private void Fire(float deltaTime) {
          Vector3 moveVector = new Vector3();
-         moveVector.Z = - 0.1f;
+         moveVector.Z = -0.1f;
          moveVector *= deltaTime * moveSpeed;
          Move(moveVector);
       }
 
       public override void Update(GameTime gameTime) {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-         if (type == ModelType.main) {    //use different movement for different model type
             MainInput(dt);
 
             //create custom collider for collision detection
-            collider = new BoundingBox(new Vector3(position.X + 1.5f, position.Y, position.Z - 0.5f),
-               new Vector3(position.X - 0.5f, position.Y + 2f, position.Z + 1.5f));
-         }
-         if(type == ModelType.obstacle)
-            Fire(dt);
-
+            //collider = new BoundingBox(new Vector3(position.X + 1.5f, position.Y, position.Z - 0.5f),
+            //   new Vector3(position.X - 0.5f, position.Y + 2f, position.Z + 1.5f));
+        
          base.Update(gameTime);
       }
 
       public void onCollision(BoundingSphere other) {
          if (collider.Intersects(other)) {
-            game.GameOver = true;
+           // game.GameOver = true;
          }
       }
 
@@ -148,10 +144,19 @@ namespace MonoGame___Lab4 {
 
                effect.World = worldMatrix;
 
+               if (collider.Radius == 0)
+                  collider = mesh.BoundingSphere;
+               else
+                  collider = BoundingSphere.CreateMerged(collider, mesh.BoundingSphere);
+
                camera.Display(effect);
             }
             mesh.Draw();
          }
+         collider.Center = position;
+         //collider.Radius *= scaleSize;
+         collider.Transform(worldMatrix);
+         //Debug.WriteLine(collider.Center);
       }
    }
 }

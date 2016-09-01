@@ -19,6 +19,7 @@ namespace MonoGame___Lab4 {
       private List<Obstacles> obstacles = new List<Obstacles>();
       private Model bullet;
       private float timeCount;
+      bool test = false;
 
       public Game1() {
          graphics = new GraphicsDeviceManager(this);
@@ -58,18 +59,18 @@ namespace MonoGame___Lab4 {
             timeCount += dt;
 
             //bullet respwan rate 
-            if (timeCount > 0.5) {
-            Spawner(bullet, main.Position, rotation,new Vector2(3,5));
+            if (timeCount > 0.5f && !test) {
+            Spawner(bullet, main.Position, rotation,new Vector2(1,1));
             timeCount = 0; //reset timer
+               test = true;
          }
 
          //moving bullets
-         foreach (var ob in obstacles) {
-            ob.Update(gameTime);
-         }
-
-         RemoveOutOfRange(); //remove bullets out of range
-
+         RemoveOutOfRange();
+            //remove bullets out of range
+            foreach (var ob in obstacles) {
+               ob.Update(gameTime);
+            }
 
             cam.Update(main.Position);
             main.Update(gameTime);
@@ -97,19 +98,19 @@ namespace MonoGame___Lab4 {
          
          for (int i = 0; i < randRate; i++) {
             var randistanceX = random.Next(-20, 20);
-            var randistanceY = random.Next(1, 2);
+            var randistanceY = random.Next(0, 1);
             var randistanceZ = random.Next(25, 40);
             var randSpeed = random.Next(20, 40);
             var iniPos = new Vector3(targetPos.X + randistanceX, randistanceY, targetPos.Z + randistanceZ);
             //instantiate bullets
-            obstacles.Add(new Obstacles(this, model, iniPos, randSpeed, 0.2f, rotation));
+            obstacles.Add(new Obstacles(this, model, iniPos, randSpeed, 0.2f, rotation,main));
          }
       }
 
       //remove out of range bullets(behind the main character)
       public void RemoveOutOfRange() {
-         for(int i = 0; i<obstacles.Count-1;i++){
-            if (main.Position.Z - 15 > obstacles[i].Position.Z) {            
+         for(int i = 0; i<obstacles.Count;i++){
+            if (main.Position.Z  > obstacles[i].Position.Z) {            
                obstacles.RemoveAt(i);
             }
          }
