@@ -196,3 +196,21 @@
 /processorParam:TextureFormat=DxtCompressed
 /build:Snowball.fbx
 
+#begin Sounds/BGM.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/BGM.mp3
+
+#begin Sounds/carExplodeSFX.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/carExplodeSFX.mp3
+
+#begin Sounds/carAccelerateSFX.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/carAccelerateSFX.wav
+
