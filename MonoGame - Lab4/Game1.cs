@@ -25,6 +25,8 @@ namespace MonoGame___Lab4 {
       private Song bgm;
       public static Song sFX;
       public static SoundEffect accelerateSFX;
+      public static SoundEffect hit;
+      public static SoundEffect stop;
 
       public Game1() {
          graphics = new GraphicsDeviceManager(this);
@@ -45,6 +47,8 @@ namespace MonoGame___Lab4 {
          rock = Content.Load<Model>("rock");
          sFX = Content.Load<Song>("Sounds/carExplodeSFX");
          accelerateSFX = Content.Load<SoundEffect>("Sounds/carAccelerateSFX");
+         hit = Content.Load<SoundEffect>("Sounds/Hit");
+         stop = Content.Load<SoundEffect>("Sounds/stop");
          bgm = Content.Load<Song>("Sounds/BGM");
          font = Content.Load<SpriteFont>("Fonts/Arial");
 
@@ -99,6 +103,7 @@ namespace MonoGame___Lab4 {
          
          spriteBatch.Begin();
          spriteBatch.DrawString(font, "Distance: "+ main.Position.Z.ToString().Split('.')[0] + "M", new Vector2(10, 10), Color.Black,0f,Vector2.Zero,0.5f,SpriteEffects.None,0f);
+         spriteBatch.DrawString(font, "Durability: " + main.getLife().ToString().Split('.')[0] + "%", new Vector2(650, 10), Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
          spriteBatch.End();
 
          GraphicsDevice.BlendState = BlendState.Opaque;

@@ -15,6 +15,7 @@ namespace MonoGame___Lab4 {
       private Vector3 lookAt;
       private float scaleSize;
       private float moveSpeed, originalSpeed;
+      private int life;
       private BoundingBox collider;
       private Game1 game;
 
@@ -42,6 +43,7 @@ namespace MonoGame___Lab4 {
          moveSpeed = speed;
          scaleSize = scale;
          originalSpeed = speed;
+         life = 100;
          this.game = game;
       }
 
@@ -83,12 +85,14 @@ namespace MonoGame___Lab4 {
 
             if (ks.IsKeyDown(Keys.W)) {
                 Game1.accelerateSFX.Play();
-                if (moveSpeed < originalSpeed * 1.5f)
-                        moveSpeed += 0.05f;
+                if (moveSpeed < originalSpeed * 2f)
+                        moveSpeed += 0.001f*moveSpeed;      //acceleration based on current speed
             }
             else if (ks.IsKeyDown(Keys.S)) {
                if (moveSpeed > originalSpeed * 0.5f)
-                  moveSpeed -= 0.05f;
+                  moveSpeed -= 0.075f;
+               if (moveSpeed > originalSpeed)
+                  Game1.stop.Play();
             }
             else if (moveSpeed > originalSpeed)
                moveSpeed -= 0.05f;
@@ -129,16 +133,23 @@ namespace MonoGame___Lab4 {
 
       //Collision Detection between other obastacles, try to use delegate method later
       public void onCollisionBox(BoundingBox other) {
-         if (collider.Intersects(other)) {
-            MediaPlayer.Volume = 1.0f;
-            MediaPlayer.Play(Game1.sFX);
-            MediaPlayer.IsRepeating = false;
-            game.GameOver = true;
-         }
-      }
+            if (collider.Intersects(other))
+            {
+                life -= 5;      //lose Durability when hit by bullet
+                Game1.hit.Play();
+                if (life <= 0)
+                {
+                    MediaPlayer.Volume = 1.0f;
+                    MediaPlayer.Play(Game1.sFX);
+                    MediaPlayer.IsRepeating = false;
+                    game.GameOver = true;
+                }   
+            }
+        }
 
       public void onCollisionSphere(BoundingSphere other) {
          if (collider.Intersects(other)) {
+            life = 0;       //die immediately when hit rocks
             MediaPlayer.Volume = 1.0f;
             MediaPlayer.Play(Game1.sFX);
             MediaPlayer.IsRepeating = false;
@@ -153,6 +164,11 @@ namespace MonoGame___Lab4 {
 
          collider = new BoundingBox(boxMin, boxMax);
       }
+
+      public int getLife()
+        {
+            return life;
+        }
 
       public void Draw(Camera camera) {
          Matrix[] transforms = new Matrix[objModel.Bones.Count];
