@@ -14,6 +14,11 @@ namespace MonoGame___Lab4 {
       private Vector2 spawnRate;
       private Game1 game;
 
+      public List<Obstacles> Obstacles {
+         get { return obstacles; }
+         set { obstacles = value; }
+      }
+
       public Spawner(Game1 game, Character target, Model model,Matrix rotation,Vector2 spawnRate)  {
          this.target = target;
          this.model = model;
@@ -22,24 +27,17 @@ namespace MonoGame___Lab4 {
          this.game = game;
       }
 
-      public List<Obstacles> Obstacles {
-         get { return obstacles; }
-         set { obstacles = value; }
-      }
-
       //make camera follow main character
       public void Update(GameTime gameTime) {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
          timeCount += dt; //start count
-         Debug.WriteLine(timeCount);
-         //bullet respwan rate 
-         if (timeCount > 0.5f) {
+         
+         if (timeCount > 0.5f) {   //bullet respwan rate 
             Instantiate(model, target.Position, rotation, spawnRate);
             timeCount = 0; //reset timer
          }
-
-         //remove bullets out of range
-         RemoveOutOfRange();
+      
+         RemoveOutOfRange();  //remove bullets out of range
       }
 
       private void Instantiate(Model model, Vector3 targetPos, Matrix rotation, Vector2 rate) {
