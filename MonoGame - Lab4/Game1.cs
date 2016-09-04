@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using System;
 using System.Diagnostics;
@@ -19,6 +20,8 @@ namespace MonoGame___Lab4 {
       private Spawner spawner;
       private Texture2D ground;
       private Model car, obs;
+      private Song bgm;
+      public static Song sFX;
 
       public Game1() {
          graphics = new GraphicsDeviceManager(this);
@@ -36,6 +39,11 @@ namespace MonoGame___Lab4 {
          ground = Content.Load<Texture2D>("grass");
          car = Content.Load<Model>("car2");
          obs = Content.Load<Model>("bullet");
+
+         sFX = Content.Load<Song>("Sounds/carExplodeSFX");
+         bgm = Content.Load<Song>("Sounds/BGM");
+         MediaPlayer.Play(bgm);
+         MediaPlayer.IsRepeating = true;
 
          //create new objects
          ResetGame();
@@ -72,7 +80,9 @@ namespace MonoGame___Lab4 {
          cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
          spawner = new Spawner(this, main, obs, rotation, new Vector2(3, 5));
          gameOver = false;
-      }
+         MediaPlayer.Play(bgm);
+         MediaPlayer.IsRepeating = true;
+        }
 
       protected override void Draw(GameTime gameTime) {
          GraphicsDevice.Clear(Color.BlanchedAlmond);

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Media;
 
 
 namespace MonoGame___Lab4 {
@@ -220,6 +221,8 @@ namespace MonoGame___Lab4 {
       //Collision Detection between other obastacles, try to use delegate method later
       public void onCollision(BoundingBox other) {
          if (collider.Intersects(other)) {
+            MediaPlayer.Play(Game1.sFX);
+            MediaPlayer.IsRepeating = false;
             game.GameOver = true;
          }
       }
