@@ -34,7 +34,7 @@ namespace MonoGame___Lab4 {
 
       public void Update(Vector3 target) {
          //swap between another plane to create infinity view
-         if(target.Z > translation.Z + size * scale)
+         if(target.Z > translation.Z + size * scale -5f)
             translation.Z += size*2;
       }
 

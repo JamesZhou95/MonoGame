@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Obstacles.cs" />
+    <Compile Include="Spawner.cs" />
     <Compile Include="TexturePlane.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Program.cs" />

@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 
+
 namespace MonoGame___Lab4 {
-   class Obstacles : GameComponent {
+   enum ModelType { main, obstacle }
+   class Character : GameComponent {
       private Model objModel;
       private Matrix worldMatrix, orientation;
       private Vector3 position;
@@ -11,8 +14,9 @@ namespace MonoGame___Lab4 {
       private Vector3 lookAt;
       private float scaleSize;
       private float moveSpeed;
-      private Character main;
+      private ModelType type;
       private BoundingBox collider;
+      private Game1 game;
 
       public Vector3 Position {
          get { return position; }
@@ -30,14 +34,15 @@ namespace MonoGame___Lab4 {
          }
       }
 
-      //create new obstacles
-      public Obstacles(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world, Character target) : base(game) {
+      //create new character/obstacles
+      public Character(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world, ModelType mType) : base(game) {
          objModel = model;
          position = pos;
          orientation = world;
          moveSpeed = speed;
+         type = mType;
          scaleSize = scale;
-         main = target;
+         this.game = game;
       }
 
       //move character to position
@@ -67,6 +72,39 @@ namespace MonoGame___Lab4 {
          lookAt = position + lookAtOffset;
       }
 
+      //keyboard input for main character
+      private void MainInput(float deltaTime) {
+         KeyboardState ks = Keyboard.GetState();
+         Vector3 moveVector = Vector3.Zero;
+
+         if (ks.IsKeyDown(Keys.W))
+            moveVector.Z = 1;
+         if (ks.IsKeyDown(Keys.S))
+            moveVector.Z = -1;
+
+         if (moveVector != Vector3.Zero) {
+            if (ks.IsKeyDown(Keys.A))
+               rotation.Y += 0.03f;
+            //moveVector.X = 1;  //not in use for car model
+
+            if (ks.IsKeyDown(Keys.D))
+               rotation.Y -= 0.03f;
+            //moveVector.X = -1; //not in use for car model
+
+            rotation.X -= 0.05f;    // rotation rate
+            moveVector.Normalize();    //constant speed
+            moveVector *= deltaTime * moveSpeed;
+            Move(moveVector);
+         }
+
+         //left wheels rotation
+         objModel.Bones[10].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[10].Transform.Translation);
+         objModel.Bones[11].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[11].Transform.Translation);
+         //right wheels rotation
+         objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
+         objModel.Bones[8].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[8].Transform.Translation);
+      }
+
       //moving obstacles(bullets)
       private void Fire(float deltaTime) {
          Vector3 moveVector = new Vector3();
@@ -77,33 +115,30 @@ namespace MonoGame___Lab4 {
 
       public override void Update(GameTime gameTime) {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-         Fire(dt);
+            MainInput(dt);
 
-        SetBoundingBox();
-        main.onCollision(collider);
+         SetBoundingSphere();
 
-        base.Update(gameTime);
+
+         base.Update(gameTime);
       }
 
-      private void SetBoundingBox() {
-         //   collider = new BoundingSphere();
-         //   foreach (ModelMesh mesh in objModel.Meshes) {
-         //      if (collider.Radius == 0)
-         //         collider = mesh.BoundingSphere;
-         //      else
-         //         collider = BoundingSphere.CreateMerged(collider, mesh.BoundingSphere);              
-         //     }
-         //collider.Center = position;
-         //collider.Radius *= scaleSize;
-         //Debug.WriteLine(collider.Radius + "   " + collider.Center);
+      public void onCollision(BoundingSphere other) {
+         if (collider.Intersects(other)) {
+            game.GameOver = true;
+           // Debug.WriteLine(other.Radius + "  " + collider.Max);
+         }
+      }
+
+      private void SetBoundingSphere() {
+         collider = new BoundingBox();
 
          //create custom collider for collision detection
-         var boxMin = new Vector3(position.X - 0.1f, 0f, position.Z - 0.21f);
-         var boxMax = new Vector3(position.X + 0.1f, 2f, position.Z + 0.21f);
+         var boxMin = new Vector3(position.X + 1.5f, position.Y, position.Z - 0.5f);
+         var boxMax = new Vector3(position.X - 0.5f, position.Y + 2f, position.Z + 1.5f);
 
-         collider = new BoundingBox(boxMin, boxMax);
-         
-      }
+         collider = new BoundingBox(boxMin,boxMax);
+         }
 
       public void Draw(Camera camera) {
          Matrix[] transforms = new Matrix[objModel.Bones.Count];
@@ -112,11 +147,11 @@ namespace MonoGame___Lab4 {
          foreach (var mesh in objModel.Meshes) {
             foreach (BasicEffect effect in mesh.Effects) {
                effect.EnableDefaultLighting();
-               effect.DiffuseColor = Color.White.ToVector3();
 
                var scale = Matrix.CreateScale(scaleSize);
                worldMatrix = transforms[mesh.ParentBone.Index] * scale * orientation * Matrix.CreateRotationY(Rotation.Y)
                  * Matrix.CreateTranslation(Position);
+
                effect.World = worldMatrix;
 
                camera.Display(effect);
