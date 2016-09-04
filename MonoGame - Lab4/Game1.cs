@@ -64,8 +64,7 @@ namespace MonoGame___Lab4 {
             ResetGame();
          }
 
-         if (Keyboard.GetState().IsKeyDown(Keys.W))
-            accelerateSFX.Play();
+            SoundEffect.MasterVolume = 0.05f;
             
          if (!gameOver) {
             foreach (var ob in spawner.Obstacles)
