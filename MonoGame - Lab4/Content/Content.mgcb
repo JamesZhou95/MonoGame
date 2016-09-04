@@ -245,3 +245,9 @@
 /processorParam:TextureFormat=Color
 /build:snow.jpg
 
+#begin Fonts/Arial.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Arial.spritefont
+

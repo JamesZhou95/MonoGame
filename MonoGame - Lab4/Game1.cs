@@ -20,6 +20,7 @@ namespace MonoGame___Lab4 {
       private TexturePlane plane, plane2;
       private Spawner spawner;
       private Texture2D ground;
+      private SpriteFont font;
       public static Model car, obs,rock;
       private Song bgm;
       public static Song sFX;
@@ -45,6 +46,7 @@ namespace MonoGame___Lab4 {
          sFX = Content.Load<Song>("Sounds/carExplodeSFX");
          accelerateSFX = Content.Load<SoundEffect>("Sounds/carAccelerateSFX");
          bgm = Content.Load<Song>("Sounds/BGM");
+         font = Content.Load<SpriteFont>("Fonts/Arial");
 
          //create new objects
          ResetGame();
@@ -88,12 +90,21 @@ namespace MonoGame___Lab4 {
 
       protected override void Draw(GameTime gameTime) {
          GraphicsDevice.Clear(Color.WhiteSmoke);
-      
+
          foreach (var ob in spawner.Obstacles)
             ob.Draw(cam);        
          main.Draw(cam);
          plane.Draw(cam);
          plane2.Draw(cam);
+         
+         spriteBatch.Begin();
+         spriteBatch.DrawString(font, "Distance: "+ main.Position.Z.ToString().Split('.')[0] + "M", new Vector2(10, 10), Color.Black,0f,Vector2.Zero,0.5f,SpriteEffects.None,0f);
+         spriteBatch.End();
+
+         GraphicsDevice.BlendState = BlendState.Opaque;
+         GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+         GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+
          base.Draw(gameTime);
       }
    }
