@@ -11,7 +11,6 @@ namespace MonoGame___Lab4 {
       private Character target;
       private Model model;
       private Matrix rotation;
-      private Vector2 spawnRate;
       private Game1 game;
 
       public List<Obstacles> Obstacles {
@@ -19,11 +18,10 @@ namespace MonoGame___Lab4 {
          set { obstacles = value; }
       }
 
-      public Spawner(Game1 game, Character target, Model model,Matrix rotation,Vector2 spawnRate)  {
+      public Spawner(Game1 game, Character target, Model model,Matrix rotation)  {
          this.target = target;
          this.model = model;
          this.rotation = rotation;
-         this.spawnRate = spawnRate;
          this.game = game;
       }
 
@@ -33,24 +31,25 @@ namespace MonoGame___Lab4 {
          timeCount += dt; //start count
          
          if (timeCount > 0.5f) {   //bullet respwan rate 
-            Instantiate(model, target.Position, rotation, spawnRate);
+            Instantiate(model,0.2f, rotation, new Vector2(3,5),new Vector2(20,40),new Vector2(1,2));
+            //Instantiate(Game1.rock,1f, rotation, new Vector2(1,3),Vector2.Zero,Vector2.Zero);
             timeCount = 0; //reset timer
          }
       
          RemoveOutOfRange();  //remove bullets out of range
       }
 
-      private void Instantiate(Model model, Vector3 targetPos, Matrix rotation, Vector2 rate) {
+      private void Instantiate(Model model, float scale, Matrix rotation, Vector2 rate,Vector2 speed,Vector2 height) {
          var randRate = Game1.random.Next((int)rate.X, (int)rate.Y);
 
          for (int i = 0; i < randRate; i++) {
             var randistanceX = Game1.random.Next(-Game1.MAPSIZE, Game1.MAPSIZE);
-            var randistanceY = Game1.random.Next(0, 2);
+            var randistanceY = Game1.random.Next((int)height.X, (int)height.Y);
             var randistanceZ = Game1.random.Next(25, 40);
-            var randSpeed = Game1.random.Next(20, 40);
-            var iniPos = new Vector3(randistanceX, randistanceY, targetPos.Z + randistanceZ);
-            //instantiate bullets
-            Obstacles.Add(new Obstacles(game, model, iniPos, randSpeed, 0.2f, rotation, target));
+            var randSpeed = Game1.random.Next((int)speed.X, (int)speed.Y);
+            var iniPos = new Vector3(randistanceX, randistanceY, target.Position.Z + randistanceZ);
+            //instantiate obstacles
+            Obstacles.Add(new Obstacles(game, model, iniPos, randSpeed, scale, rotation, target));
          }
       }
 

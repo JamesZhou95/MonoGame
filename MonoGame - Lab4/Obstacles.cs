@@ -112,12 +112,14 @@ namespace MonoGame___Lab4 {
          foreach (var mesh in objModel.Meshes) {
             foreach (BasicEffect effect in mesh.Effects) {
                effect.EnableDefaultLighting();
-               effect.DiffuseColor = Color.White.ToVector3();
 
                var scale = Matrix.CreateScale(scaleSize);
                worldMatrix = transforms[mesh.ParentBone.Index] * scale * orientation * Matrix.CreateRotationY(Rotation.Y)
                  * Matrix.CreateTranslation(Position);
                effect.World = worldMatrix;
+
+               RasterizerState stat = new RasterizerState();
+               stat.CullMode = CullMode.CullClockwiseFace;
 
                camera.Display(effect);
             }

@@ -11,7 +11,7 @@ namespace MonoGame___Lab4 {
    public class Game1 : Game {
       public static Random random = new Random();
       public readonly static int MAPSIZE = 20;
-      private static Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
+      private Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
       private bool gameOver;
       private GraphicsDeviceManager graphics;
       private SpriteBatch spriteBatch;
@@ -20,7 +20,7 @@ namespace MonoGame___Lab4 {
       private TexturePlane plane, plane2;
       private Spawner spawner;
       private Texture2D ground;
-      private Model car, obs;
+      public Model car, bullet,rock;
       private Song bgm;
       public static Song sFX;
       public static SoundEffect accelerateSFX;
@@ -40,11 +40,13 @@ namespace MonoGame___Lab4 {
          spriteBatch = new SpriteBatch(GraphicsDevice);
          ground = Content.Load<Texture2D>("grass");
          car = Content.Load<Model>("car2");
-         obs = Content.Load<Model>("bullet");
-
+         bullet = Content.Load<Model>("bullet");
+         rock = Content.Load<Model>("rock");
          sFX = Content.Load<Song>("Sounds/carExplodeSFX");
          accelerateSFX = Content.Load<SoundEffect>("Sounds/carAccelerateSFX");
          bgm = Content.Load<Song>("Sounds/BGM");
+
+         MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
          MediaPlayer.IsRepeating = true;
 
@@ -62,9 +64,7 @@ namespace MonoGame___Lab4 {
 
          if (Keyboard.GetState().IsKeyDown(Keys.Enter) && gameOver) {
             ResetGame();
-         }
-
-            SoundEffect.MasterVolume = 0.05f;
+         }       
             
          if (!gameOver) {
             foreach (var ob in spawner.Obstacles)
@@ -83,12 +83,8 @@ namespace MonoGame___Lab4 {
          plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
          plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE)), 2);
          cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
-         spawner = new Spawner(this, main, obs, rotation, new Vector2(3, 5));
-         gameOver = false;
-         MediaPlayer.Volume = 0.6f;
-         MediaPlayer.Play(bgm);
-         MediaPlayer.IsRepeating = true;
-        }
+         spawner = new Spawner(this, main, bullet, rotation);
+      }
 
       protected override void Draw(GameTime gameTime) {
          GraphicsDevice.Clear(Color.BlanchedAlmond);
