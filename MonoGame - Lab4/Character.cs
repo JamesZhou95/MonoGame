@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 
 namespace MonoGame___Lab4 {
@@ -85,8 +86,9 @@ namespace MonoGame___Lab4 {
             moveVector.Z = 1;
 
             if (ks.IsKeyDown(Keys.W)) {
-               if (moveSpeed < originalSpeed * 1.5f)
-                  moveSpeed += 0.05f;
+                Game1.accelerateSFX.Play();
+                if (moveSpeed < originalSpeed * 1.5f)
+                        moveSpeed += 0.05f;
             }
             else if (ks.IsKeyDown(Keys.S)) {
                if (moveSpeed > originalSpeed * 0.5f)
@@ -126,6 +128,7 @@ namespace MonoGame___Lab4 {
             moveVector.Z = 1;
 
             if (ks.IsKeyDown(Keys.W)) {
+               Game1.accelerateSFX.Play();
                if (moveSpeed < originalSpeed * 1.5f)
                   moveSpeed += 0.05f;
             }
@@ -221,6 +224,7 @@ namespace MonoGame___Lab4 {
       //Collision Detection between other obastacles, try to use delegate method later
       public void onCollision(BoundingBox other) {
          if (collider.Intersects(other)) {
+            MediaPlayer.Volume = 1.0f;
             MediaPlayer.Play(Game1.sFX);
             MediaPlayer.IsRepeating = false;
             game.GameOver = true;

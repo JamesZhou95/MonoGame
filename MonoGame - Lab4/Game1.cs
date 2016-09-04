@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 using System;
 using System.Diagnostics;
@@ -22,6 +23,7 @@ namespace MonoGame___Lab4 {
       private Model car, obs;
       private Song bgm;
       public static Song sFX;
+      public static SoundEffect accelerateSFX;
 
       public Game1() {
          graphics = new GraphicsDeviceManager(this);
@@ -41,6 +43,7 @@ namespace MonoGame___Lab4 {
          obs = Content.Load<Model>("bullet");
 
          sFX = Content.Load<Song>("Sounds/carExplodeSFX");
+         accelerateSFX = Content.Load<SoundEffect>("Sounds/carAccelerateSFX");
          bgm = Content.Load<Song>("Sounds/BGM");
          MediaPlayer.Play(bgm);
          MediaPlayer.IsRepeating = true;
@@ -61,6 +64,9 @@ namespace MonoGame___Lab4 {
             ResetGame();
          }
 
+         if (Keyboard.GetState().IsKeyDown(Keys.W))
+            accelerateSFX.Play();
+            
          if (!gameOver) {
             foreach (var ob in spawner.Obstacles)
                ob.Update(gameTime);
@@ -80,6 +86,7 @@ namespace MonoGame___Lab4 {
          cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
          spawner = new Spawner(this, main, obs, rotation, new Vector2(3, 5));
          gameOver = false;
+         MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
          MediaPlayer.IsRepeating = true;
         }
