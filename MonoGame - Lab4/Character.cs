@@ -46,7 +46,6 @@ namespace MonoGame___Lab4 {
          scaleSize = scale;
          originalSpeed = speed;
          this.game = game;
-         SoundEffect.MasterVolume = 0.1f;
       }
 
       //move character to position
@@ -87,7 +86,7 @@ namespace MonoGame___Lab4 {
             moveVector.Z = 1;
 
             if (ks.IsKeyDown(Keys.W)) {
-                //Game1.accelerateSFX.Play();
+                Game1.accelerateSFX.Play();
                 if (moveSpeed < originalSpeed * 1.5f)
                         moveSpeed += 0.05f;
             }
@@ -129,7 +128,7 @@ namespace MonoGame___Lab4 {
             moveVector.Z = 1;
 
             if (ks.IsKeyDown(Keys.W)) {
-               //Game1.accelerateSFX.Play();
+               Game1.accelerateSFX.Play();
                if (moveSpeed < originalSpeed * 1.5f)
                   moveSpeed += 0.05f;
             }
@@ -226,7 +225,7 @@ namespace MonoGame___Lab4 {
       public void onCollision(BoundingBox other) {
          if (collider.Intersects(other)) {
             MediaPlayer.Volume = 1.0f;
-            //MediaPlayer.Play(Game1.sFX);
+            MediaPlayer.Play(Game1.sFX);
             MediaPlayer.IsRepeating = false;
             game.GameOver = true;
          }
