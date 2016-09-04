@@ -7,9 +7,7 @@ using Microsoft.Xna.Framework.Audio;
 
 
 namespace MonoGame___Lab4 {
-   enum InputType { type1, type2, type3,type4 }
    class Character : GameComponent {
-      private InputType type;
       private Model objModel;
       private Matrix worldMatrix, orientation;
       private Vector3 position;
@@ -37,12 +35,11 @@ namespace MonoGame___Lab4 {
       }
 
       //create new character/obstacles
-      public Character(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world, InputType mType) : base(game) {
+      public Character(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world) : base(game) {
          objModel = model;
          position = pos;
          orientation = world;
          moveSpeed = speed;
-         type = mType;
          scaleSize = scale;
          originalSpeed = speed;
          this.game = game;
@@ -80,9 +77,8 @@ namespace MonoGame___Lab4 {
          KeyboardState ks = Keyboard.GetState();
          Vector3 moveVector = Vector3.Zero;
 
-         //Type 1 Up&Down for Speed control, Left&Right for Rotation(360*)
-         #region InputType1
-         if (type == InputType.type1) {
+         //Up&Down for Speed control, Left&Right for Rotation(Limited 70*)
+         #region Input
             moveVector.Z = 1;
 
             if (ks.IsKeyDown(Keys.W)) {
@@ -99,11 +95,13 @@ namespace MonoGame___Lab4 {
             else if (moveSpeed < originalSpeed)
                moveSpeed += 0.05f;
 
-            if (ks.IsKeyDown(Keys.A))
-               rotation.Y += 0.03f;
+            if (ks.IsKeyDown(Keys.A)&&rotation.Y < MathHelper.ToRadians(70f)) {
+                  rotation.Y += 0.03f;
+            }
 
-            if (ks.IsKeyDown(Keys.D))
+            if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f)) {
                rotation.Y -= 0.03f;
+            }
 
             rotation.X -= 0.05f;    // rotation rate
             moveVector.Normalize();    //constant speed
@@ -118,99 +116,7 @@ namespace MonoGame___Lab4 {
             objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
             objModel.Bones[8].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[8].Transform.Translation);
             #endregion
-         }
          #endregion InputType1
-
-         //Type 2 Up&Down for Speed control, Left&Right for Limited Rotation(15*)
-         //Type 3 Up&Down for Speed control, Left&Right for Limited Rotation(15*) and with Left&Right shift
-         #region InputType2and3
-         if (type == InputType.type2) {
-            moveVector.Z = 1;
-
-            if (ks.IsKeyDown(Keys.W)) {
-               Game1.accelerateSFX.Play();
-               if (moveSpeed < originalSpeed * 1.5f)
-                  moveSpeed += 0.05f;
-            }
-            else if (ks.IsKeyDown(Keys.S)) {
-               if (moveSpeed > originalSpeed * 0.5f)
-                  moveSpeed -= 0.05f;
-            }
-            else if (moveSpeed > originalSpeed)
-               moveSpeed -= 0.05f;
-            else if (moveSpeed < originalSpeed)
-               moveSpeed += 0.05f;
-
-            if (ks.IsKeyDown(Keys.A)) {
-               if(type == InputType.type3)
-                  moveVector.X += 1f;
-               if (rotation.Y < MathHelper.ToRadians(15f))
-                  rotation.Y += 0.02f;
-
-               Debug.WriteLine(rotation.Y);
-            }
-
-            if (ks.IsKeyDown(Keys.D)) {
-               if (type == InputType.type3)
-                  moveVector.X -= 1f;
-               if(rotation.Y > MathHelper.ToRadians(-15f))
-               rotation.Y -= 0.02f;
-               Debug.WriteLine(rotation.Y);
-            }
-
-            moveVector.Normalize();
-            moveVector *= deltaTime * moveSpeed;
-            Move(moveVector);
-
-            #region wheelsAnimation
-            //left wheels rotation
-            objModel.Bones[10].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[10].Transform.Translation);
-            objModel.Bones[11].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[11].Transform.Translation);
-            //right wheels rotation
-            objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
-            objModel.Bones[8].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[8].Transform.Translation);
-            #endregion
-         }
-         #endregion
-
-         //Type 4 Up&Down for Moving(No Speed Control), Left&Right for Rotation(360*),No limit At all.
-         #region InputType2and3
-         if (type == InputType.type4) {
-            
-
-            if (ks.IsKeyDown(Keys.W)) {
-               moveVector.Z = 1;
-            }
-            if (ks.IsKeyDown(Keys.S)) {
-               moveVector.Z = -1;
-            }
-
-            if (moveVector != Vector3.Zero) {
-               if (ks.IsKeyDown(Keys.A)) {
-                  //if (rotation.Y < MathHelper.ToRadians(30f))
-                     rotation.Y += 0.02f;
-               }
-
-               if (ks.IsKeyDown(Keys.D)) {
-                  //if (rotation.Y > MathHelper.ToRadians(-30f))
-                     rotation.Y -= 0.02f;
-               }
-
-               moveVector.Normalize();
-               moveVector *= deltaTime * moveSpeed;
-               Move(moveVector);
-
-               #region wheelsAnimation
-               //left wheels rotation
-               objModel.Bones[10].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[10].Transform.Translation);
-               objModel.Bones[11].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[11].Transform.Translation);
-               //right wheels rotation
-               objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
-               objModel.Bones[8].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[8].Transform.Translation);
-               #endregion
-            }
-         }
-         #endregion
       }
 
       public override void Update(GameTime gameTime) {

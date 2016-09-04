@@ -11,7 +11,7 @@ namespace MonoGame___Lab4 {
    public class Game1 : Game {
       public static Random random = new Random();
       public readonly static int MAPSIZE = 20;
-      private static Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
+      public static Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
       private bool gameOver;
       private GraphicsDeviceManager graphics;
       private SpriteBatch spriteBatch;
@@ -20,7 +20,7 @@ namespace MonoGame___Lab4 {
       private TexturePlane plane, plane2;
       private Spawner spawner;
       private Texture2D ground;
-      private Model car, obs;
+      public static Model car, obs;
       private Song bgm;
       public static Song sFX;
       public static SoundEffect accelerateSFX;
@@ -45,8 +45,6 @@ namespace MonoGame___Lab4 {
          sFX = Content.Load<Song>("Sounds/carExplodeSFX");
          accelerateSFX = Content.Load<SoundEffect>("Sounds/carAccelerateSFX");
          bgm = Content.Load<Song>("Sounds/BGM");
-         MediaPlayer.Play(bgm);
-         MediaPlayer.IsRepeating = true;
 
          //create new objects
          ResetGame();
@@ -79,7 +77,7 @@ namespace MonoGame___Lab4 {
       }
 
       private void ResetGame() {
-         main = new Character(this, car, Vector3.Zero, 12f, 0.02f, rotation, InputType.type1);
+         main = new Character(this, car, Vector3.Zero, 12f, 0.02f, rotation);
          plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
          plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE)), 2);
          cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);

@@ -50,7 +50,7 @@ namespace MonoGame___Lab4 {
             var randSpeed = Game1.random.Next(20, 40);
             var iniPos = new Vector3(randistanceX, randistanceY, targetPos.Z + randistanceZ);
             //instantiate bullets
-            Obstacles.Add(new Obstacles(game, model, iniPos, randSpeed, 0.2f, rotation, target));
+            Obstacles.Add(new Obstacles(game, Game1.obs, iniPos, randSpeed, 0.2f, rotation, target));
          }
       }
 
