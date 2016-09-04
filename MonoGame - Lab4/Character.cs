@@ -128,7 +128,16 @@ namespace MonoGame___Lab4 {
       }
 
       //Collision Detection between other obastacles, try to use delegate method later
-      public void onCollision(BoundingBox other) {
+      public void onCollisionBox(BoundingBox other) {
+         if (collider.Intersects(other)) {
+            MediaPlayer.Volume = 1.0f;
+            MediaPlayer.Play(Game1.sFX);
+            MediaPlayer.IsRepeating = false;
+            game.GameOver = true;
+         }
+      }
+
+      public void onCollisionSphere(BoundingSphere other) {
          if (collider.Intersects(other)) {
             MediaPlayer.Volume = 1.0f;
             MediaPlayer.Play(Game1.sFX);
@@ -139,8 +148,8 @@ namespace MonoGame___Lab4 {
 
       //create custom collider for collision detection
       private void SetCustomBoundingBox() {
-         var boxMin = new Vector3(position.X - 0.8f, 0f, position.Z - 1.8f);
-         var boxMax = new Vector3(position.X + 0.8f, 2f, position.Z + 1.8f);
+         var boxMin = new Vector3(position.X - 0.7f, 0f, position.Z - 1.5f);
+         var boxMax = new Vector3(position.X + 0.7f, 2f, position.Z + 1.8f);
 
          collider = new BoundingBox(boxMin, boxMax);
       }
