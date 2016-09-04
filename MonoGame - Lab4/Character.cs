@@ -18,6 +18,7 @@ namespace MonoGame___Lab4 {
       private float scaleSize;
       private float moveSpeed, originalSpeed;
       private BoundingBox collider;
+      private int life;
       private Game1 game;
 
       public Vector3 Position {
@@ -45,6 +46,7 @@ namespace MonoGame___Lab4 {
          type = mType;
          scaleSize = scale;
          originalSpeed = speed;
+         life = 100;
          this.game = game;
       }
 
@@ -80,32 +82,38 @@ namespace MonoGame___Lab4 {
          KeyboardState ks = Keyboard.GetState();
          Vector3 moveVector = Vector3.Zero;
 
-         //Type 1 Up&Down for Speed control, Left&Right for Rotation(360*)
-         #region InputType1
-         if (type == InputType.type1) {
-            moveVector.Z = 1;
+            //Type 1 Up&Down for Speed control, Left&Right for Rotation(180*)
+            #region InputType1
+            if (type == InputType.type1) {
+                moveVector.Z = 1;
 
-            if (ks.IsKeyDown(Keys.W)) {
-                Game1.accelerateSFX.Play();
-                if (moveSpeed < originalSpeed * 1.5f)
+                if (ks.IsKeyDown(Keys.W)) {
+                    Game1.accelerateSFX.Play();
+                    if (moveSpeed < originalSpeed * 1.5f)
                         moveSpeed += 0.05f;
-            }
-            else if (ks.IsKeyDown(Keys.S)) {
-               if (moveSpeed > originalSpeed * 0.5f)
-                  moveSpeed -= 0.05f;
-            }
-            else if (moveSpeed > originalSpeed)
-               moveSpeed -= 0.05f;
-            else if (moveSpeed < originalSpeed)
-               moveSpeed += 0.05f;
+                }
+                else if (ks.IsKeyDown(Keys.S)) {
+                    if (moveSpeed > originalSpeed * 0.5f)
+                        moveSpeed -= 0.05f;
+                }
+                else if (moveSpeed > originalSpeed)
+                    moveSpeed -= 0.05f;
+                else if (moveSpeed < originalSpeed)
+                    moveSpeed += 0.05f;
 
-            if (ks.IsKeyDown(Keys.A))
-               rotation.Y += 0.03f;
+                if (ks.IsKeyDown(Keys.A))
+                {
+                    if (rotation.Y < MathHelper.Pi / 2)     //limited turnning degree
+                        rotation.Y += 0.03f;
+                }
 
-            if (ks.IsKeyDown(Keys.D))
-               rotation.Y -= 0.03f;
+                if (ks.IsKeyDown(Keys.D))
+                {
+                    if (rotation.Y > - MathHelper.Pi / 2)     //limited turnning degree
+                        rotation.Y -= 0.03f;
+                }
 
-            rotation.X -= 0.05f;    // rotation rate
+                rotation.X -= 0.05f;    // rotation rate
             moveVector.Normalize();    //constant speed
             moveVector *= deltaTime * moveSpeed;
             Move(moveVector);
@@ -224,12 +232,28 @@ namespace MonoGame___Lab4 {
       //Collision Detection between other obastacles, try to use delegate method later
       public void onCollision(BoundingBox other) {
          if (collider.Intersects(other)) {
-            MediaPlayer.Volume = 1.0f;
-            MediaPlayer.Play(Game1.sFX);
-            MediaPlayer.IsRepeating = false;
-            game.GameOver = true;
+            life -= 5;      //lose life when hit
+                if (life <= 0)
+                {
+                    MediaPlayer.Volume = 1.0f;
+                    MediaPlayer.Play(Game1.sFX);
+                    MediaPlayer.IsRepeating = false;
+                    game.GameOver = true;       //game over when life is 0
+                }
          }
       }
+
+      //return character life level
+      public string getLife()
+        {
+            return life.ToString();
+        }
+
+      //return the distance of driving
+      public string getDistance()
+        {
+            return position.Z.ToString();
+        }
 
       //create custom collider for collision detection
       private void SetCustomBoundingBox() {
