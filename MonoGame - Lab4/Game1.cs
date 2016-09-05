@@ -9,9 +9,15 @@ using System.Diagnostics;
 
 namespace MonoGame___Lab4 {
    public class Game1 : Game {
+      #region variable
       public static Random random = new Random();
       public readonly static int MAPSIZE = 20;
       public static Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
+      public static Song sFX;
+      public static SoundEffect accelerateSFX;
+      public static SoundEffect hit;
+      public static SoundEffect stop;
+
       private bool gameOver;
       private GraphicsDeviceManager graphics;
       private SpriteBatch spriteBatch;
@@ -21,19 +27,20 @@ namespace MonoGame___Lab4 {
       private Spawner spawner;
       private Texture2D ground;
       private SpriteFont font;
-      public static Model car, obs,rock;
+      public static Model car, obs, rock;
       private Song bgm;
-      public static Song sFX;
-      public static SoundEffect accelerateSFX;
-      public static SoundEffect hit;
-      public static SoundEffect stop;
+      #endregion
+
+      #region property
+      public bool GameOver { get { return gameOver; } set { gameOver = value; } }
+      #endregion
 
       public Game1() {
          graphics = new GraphicsDeviceManager(this);
          Content.RootDirectory = "Content";
       }
 
-      public bool GameOver { get { return gameOver; } set { gameOver = value; } }
+
 
       protected override void Initialize() {
          base.Initialize();
@@ -41,10 +48,10 @@ namespace MonoGame___Lab4 {
 
       protected override void LoadContent() {
          spriteBatch = new SpriteBatch(GraphicsDevice);
-         ground = Content.Load<Texture2D>("snow");
-         car = Content.Load<Model>("car2");
-         obs = Content.Load<Model>("bullet");
-         rock = Content.Load<Model>("rock");
+         ground = Content.Load<Texture2D>("Textures/snow");
+         car = Content.Load<Model>("Models/car");
+         obs = Content.Load<Model>("Models/bullet");
+         rock = Content.Load<Model>("Models/rock");
          sFX = Content.Load<Song>("Sounds/carExplodeSFX");
          accelerateSFX = Content.Load<SoundEffect>("Sounds/carAccelerateSFX");
          hit = Content.Load<SoundEffect>("Sounds/Hit");
@@ -66,7 +73,7 @@ namespace MonoGame___Lab4 {
 
          if (Keyboard.GetState().IsKeyDown(Keys.Enter) && gameOver)
             ResetGame();
-            
+
          if (!gameOver) {
             foreach (var ob in spawner.Obstacles)
                ob.Update(gameTime);
@@ -96,14 +103,14 @@ namespace MonoGame___Lab4 {
          GraphicsDevice.Clear(Color.WhiteSmoke);
 
          foreach (var ob in spawner.Obstacles)
-            ob.Draw(cam);        
+            ob.Draw(cam);
          main.Draw(cam);
          plane.Draw(cam);
          plane2.Draw(cam);
-         
+
          spriteBatch.Begin();
-         spriteBatch.DrawString(font, "Distance: "+ main.Position.Z.ToString().Split('.')[0] + "M", new Vector2(10, 10), Color.Black,0f,Vector2.Zero,0.5f,SpriteEffects.None,0f);
-         spriteBatch.DrawString(font, "Durability: " + main.getLife().ToString().Split('.')[0] + "%", new Vector2(650, 10), Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+         spriteBatch.DrawString(font, "Distance: " + main.Position.Z.ToString().Split('.')[0] + "M", new Vector2(10, 10), Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+         spriteBatch.DrawString(font, "Durability: " + main.Life.ToString().Split('.')[0] + "%", new Vector2(650, 10), Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
          spriteBatch.End();
 
          GraphicsDevice.BlendState = BlendState.Opaque;

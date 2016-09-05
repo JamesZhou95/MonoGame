@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace MonoGame___Lab4 {
    class Character : GameComponent {
+      #region variable
       private Model objModel;
       private Matrix worldMatrix, orientation;
       private Vector3 position;
@@ -15,10 +16,10 @@ namespace MonoGame___Lab4 {
       private Vector3 lookAt;
       private float scaleSize;
       private float moveSpeed, originalSpeed;
-      private int life;
       private BoundingBox collider;
       private Game1 game;
-
+      #endregion
+      #region  property
       public Vector3 Position {
          get { return position; }
          set {
@@ -35,6 +36,10 @@ namespace MonoGame___Lab4 {
          }
       }
 
+      public int Life { get; private set; }
+
+      #endregion
+
       //create new character/obstacles
       public Character(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world) : base(game) {
          objModel = model;
@@ -43,7 +48,7 @@ namespace MonoGame___Lab4 {
          moveSpeed = speed;
          scaleSize = scale;
          originalSpeed = speed;
-         life = 100;
+         Life = 100;
          this.game = game;
       }
 
@@ -81,45 +86,44 @@ namespace MonoGame___Lab4 {
 
          //Up&Down for Speed control, Left&Right for Rotation(Limited 70*)
          #region Input
-            moveVector.Z = 1;
+         moveVector.Z = 1;
 
-            if (ks.IsKeyDown(Keys.W)) {
-                Game1.accelerateSFX.Play();
-                if (moveSpeed < originalSpeed * 2f)
-                        moveSpeed += 0.001f*moveSpeed;      //acceleration based on current speed
-            }
-            else if (ks.IsKeyDown(Keys.S)) {
-               if (moveSpeed > originalSpeed * 0.5f)
-                  moveSpeed -= 0.075f;
-               if (moveSpeed > originalSpeed)
-                  Game1.stop.Play();
-            }
-            else if (moveSpeed > originalSpeed)
-               moveSpeed -= 0.05f;
-            else if (moveSpeed < originalSpeed)
-               moveSpeed += 0.05f;
+         if (ks.IsKeyDown(Keys.W)) {
+            Game1.accelerateSFX.Play();
+            if (moveSpeed < originalSpeed * 2f)
+               moveSpeed += 0.005f * moveSpeed;      //acceleration based on current speed
+         }
+         else if (ks.IsKeyDown(Keys.S)) {
+            Game1.stop.Play();
+            if (moveSpeed > originalSpeed * 0.5f)
+               moveSpeed -= 0.075f;
+         }
+         else if (moveSpeed > originalSpeed)
+            moveSpeed -= 0.075f;
+         else if (moveSpeed < originalSpeed)
+            moveSpeed += 0.075f;
 
-            if (ks.IsKeyDown(Keys.A)&&rotation.Y < MathHelper.ToRadians(70f)) {
-                  rotation.Y += 0.03f;
-            }
+         if (ks.IsKeyDown(Keys.A) && rotation.Y < MathHelper.ToRadians(70f)) {
+            rotation.Y += 0.03f;
+         }
 
-            if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f)) {
-               rotation.Y -= 0.03f;
-            }
+         if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f)) {
+            rotation.Y -= 0.03f;
+         }
 
-            rotation.X -= 0.05f;    // rotation rate
-            moveVector.Normalize();    //constant speed
-            moveVector *= deltaTime * moveSpeed;
-            Move(moveVector);
+         rotation.X -= 0.05f;    // rotation rate
+         moveVector.Normalize();    //constant speed
+         moveVector *= deltaTime * moveSpeed;
+         Move(moveVector);
 
-            #region wheelsAnimation
-            //left wheels rotation
-            objModel.Bones[10].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[10].Transform.Translation);
-            objModel.Bones[11].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[11].Transform.Translation);
-            //right wheels rotation
-            objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
-            objModel.Bones[8].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[8].Transform.Translation);
-            #endregion
+         #region wheelsAnimation
+         //left wheels rotation
+         objModel.Bones[10].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[10].Transform.Translation);
+         objModel.Bones[11].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[11].Transform.Translation);
+         //right wheels rotation
+         objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
+         objModel.Bones[8].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[8].Transform.Translation);
+         #endregion
          #endregion InputType1
       }
 
@@ -128,32 +132,26 @@ namespace MonoGame___Lab4 {
          MainInput(dt);
          SetCustomBoundingBox();
 
+         if (Life <= 0) {
+            MediaPlayer.Play(Game1.sFX);
+            MediaPlayer.IsRepeating = false;
+            game.GameOver = true;
+         }
+
          base.Update(gameTime);
       }
 
       //Collision Detection between other obastacles, try to use delegate method later
       public void onCollisionBox(BoundingBox other) {
-            if (collider.Intersects(other))
-            {
-                life -= 5;      //lose Durability when hit by bullet
-                Game1.hit.Play();
-                if (life <= 0)
-                {
-                    MediaPlayer.Volume = 1.0f;
-                    MediaPlayer.Play(Game1.sFX);
-                    MediaPlayer.IsRepeating = false;
-                    game.GameOver = true;
-                }   
-            }
-        }
+         if (collider.Intersects(other)) {
+            Life -= 5;      //lose Durability when hit by bullet
+            Game1.hit.Play();
+         }
+      }
 
       public void onCollisionSphere(BoundingSphere other) {
          if (collider.Intersects(other)) {
-            life = 0;       //die immediately when hit rocks
-            MediaPlayer.Volume = 1.0f;
-            MediaPlayer.Play(Game1.sFX);
-            MediaPlayer.IsRepeating = false;
-            game.GameOver = true;
+            Life = 0;       //die immediately when hit rocks
          }
       }
 
@@ -164,11 +162,6 @@ namespace MonoGame___Lab4 {
 
          collider = new BoundingBox(boxMin, boxMax);
       }
-
-      public int getLife()
-        {
-            return life;
-        }
 
       public void Draw(Camera camera) {
          Matrix[] transforms = new Matrix[objModel.Bones.Count];
