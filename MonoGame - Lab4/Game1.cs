@@ -88,6 +88,7 @@ namespace MonoGame___Lab4 {
          MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
          MediaPlayer.IsRepeating = true;
+         SoundEffect.MasterVolume = 0.05f;
         }
 
       protected override void Draw(GameTime gameTime) {
