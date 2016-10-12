@@ -114,20 +114,12 @@ namespace MonoGame___Lab4
          else if (moveSpeed < originalSpeed)
             moveSpeed += 0.05f;
 
-         //if (ks.IsKeyDown(Keys.A)&&rotation.Y < MathHelper.ToRadians(70f)) {
-         //      rotation.Y += 0.03f;
-         //}
-
-         //if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f)) {
-         //   rotation.Y -= 0.03f;
-         //}
-
-         if (ks.IsKeyDown(Keys.A))
+         if (ks.IsKeyDown(Keys.A) && rotation.Y < MathHelper.ToRadians(70f))
          {
             rotation.Y += 0.03f;
          }
 
-         if (ks.IsKeyDown(Keys.D))
+         if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f))
          {
             rotation.Y -= 0.03f;
          }
@@ -142,7 +134,17 @@ namespace MonoGame___Lab4
          //   rotation.Y -= 0.03f;
          //}
 
-         rotation.X -= 0.05f;    // rotation rate
+         //if (ks.IsKeyDown(Keys.A))
+         //{
+         //   rotation.Y += 0.03f;
+         //}
+
+         //if (ks.IsKeyDown(Keys.D))
+         //{
+         //   rotation.Y -= 0.03f;
+         //}
+
+         //rotation.X -= 0.05f;    // rotation rate
          moveVector.Normalize();    //constant speed
          moveVector *= deltaTime * moveSpeed;
          Move(moveVector);

@@ -16,9 +16,6 @@ namespace MonoGame___Lab4
       private float moveSpeed;
       private Character main;
       private BoundingBox collider;
-      private Vector2 distance;
-
-      bool nextok = true;
 
       private PathFinding map;
       private bool findPoints = true;
@@ -114,7 +111,6 @@ namespace MonoGame___Lab4
 
          if (findPoints)
          {
-            Console.WriteLine(main.Position);
             points = map.FindPath(endPos.toPoint(), position.toPoint(), true);
             findPoints = false;
          }

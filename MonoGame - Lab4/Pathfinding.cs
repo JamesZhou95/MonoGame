@@ -21,7 +21,6 @@ namespace MonoGame___Lab4
 
       public Point FindPath(Point start, Point end, bool IsIgnoreCorner)
       {
-         Console.WriteLine("start: (" + start.X + ", " + start.Z + ")  end: (" + end.X + ", " + end.Z + ")");
          OpenList.Add(start);
          while (OpenList.Count != 0)
          {

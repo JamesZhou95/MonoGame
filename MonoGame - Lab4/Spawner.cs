@@ -51,7 +51,8 @@ namespace MonoGame___Lab4
 
                if (number.Equals('r'))
                {
-                  Instantiate2(Game1.rock, new Vector3(x * sizeX - xMax, 0, z * sizeZ), new Vector2(0, 180), new Vector2(0.5f, 1f), ModelType.rock);
+
+                  Instantiate2(Game1.rock, new Vector3(x.toWorldX(), 0, z.toWorldZ()), new Vector2(0, 180), new Vector2(0.5f, 1f), ModelType.rock);
                }
                else if (number.Equals('X'))
                {
@@ -78,7 +79,7 @@ namespace MonoGame___Lab4
          //instantiate bullets
          Obstacles.Add(new Obstacles(game, type, model, iniPos, 0, (float)randScale,
             Matrix.CreateRotationY(MathHelper.ToRadians(randRotate)), target));
-        RemoveOutOfRange();  //remove bullets out of range
+          //remove bullets out of range
       }
 
       private void Instantiate(

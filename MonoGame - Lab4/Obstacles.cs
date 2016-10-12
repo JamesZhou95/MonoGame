@@ -128,8 +128,7 @@ namespace MonoGame___Lab4
                   bSphere = BoundingSphere.CreateMerged(bSphere, mesh.BoundingSphere);
             }
             bSphere.Center = new Vector3(position.X, position.Y + 0.05f, position.Z);
-            bSphere.Radius *= scaleSize * 0.5f;
-            Debug.WriteLine(bSphere.Radius + "   " + bSphere.Center);
+            bSphere.Radius *= scaleSize * 0.25f;
          }
       }
 
