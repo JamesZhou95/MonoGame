@@ -9,37 +9,36 @@ namespace MonoGame___Lab4
    class Spawner
    {
       private float timeCount;
-      private List<Obstacles> obstacles = new List<Obstacles>();
       private Character target;
       private Game1 game;
 
-      public List<Obstacles> Obstacles
-      {
-         get { return obstacles; }
-         set { obstacles = value; }
-      }
+      public List<Obstacles> Obstacles { get; set; }
 
       public Spawner(Game1 game, Character target)
       {
          this.target = target;
          this.game = game;
+
+        Obstacles = new List<Obstacles>();
       }
 
       //make camera follow main character
       public void Update(GameTime gameTime)
       {
-         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-         timeCount += dt; //start count
+         //float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+         //timeCount += dt; //start count
 
-         if (timeCount > 0.5f)
-         {   //bullet respwan rate 
-            Instantiate(Game1.obs, target.Position, new Vector2(3, 5), new Vector2(20, 40), new Vector2(1, 2),
-               new Vector2(180, 180), new Vector2(0.2f, 0.2f), ModelType.bullet);
-            Instantiate(Game1.rock, target.Position, new Vector2(0, 4), Vector2.Zero, Vector2.Zero,
-               new Vector2(0, 180), new Vector2(0.5f, 1.5f), ModelType.rock);
-            timeCount = 0; //reset timer
-         }
-         RemoveOutOfRange();  //remove bullets out of range
+         //if (timeCount > 0.5f)
+         //{   //bullet respwan rate 
+         //   Instantiate(Game1.obs, target.Position, new Vector2(3, 5), new Vector2(20, 40), new Vector2(1, 2),
+         //      new Vector2(180, 180), new Vector2(0.2f, 0.2f), ModelType.bullet);
+         //   Instantiate(Game1.rock, target.Position, new Vector2(0, 4), Vector2.Zero, Vector2.Zero,
+         //      new Vector2(0, 180), new Vector2(0.5f, 1.5f), ModelType.rock);
+         //   timeCount = 0; //reset timer
+         //}
+         //RemoveOutOfRange();  //remove bullets out of range
+
+
       }
 
       private void Instantiate2(
@@ -86,9 +85,9 @@ namespace MonoGame___Lab4
 
       private void RemoveOutOfRange()
       {
-         for (int i = 0; i < obstacles.Count; i++)
+         for (int i = 0; i < Obstacles.Count; i++)
          {
-            if (target.Position.Z - 15 > obstacles[i].Position.Z)
+            if (target.Position.Z - 15 > Obstacles[i].Position.Z)
             {
                Obstacles.RemoveAt(i);
             }
