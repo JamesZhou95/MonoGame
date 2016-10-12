@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 
 namespace MonoGame___Lab4 {
-   enum ModelType { bullet,rock}
+   enum ModelType { bullet, rock }
    class Obstacles : GameComponent {
       private ModelType type;
       private Model objModel;
@@ -85,13 +85,13 @@ namespace MonoGame___Lab4 {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
          Fire(dt);
 
-        SetBoundingBox();
+         SetBoundingBox();
          if (type == ModelType.bullet)
             main.onCollisionBox(collider);
          else
             main.onCollisionSphere(bSphere);
 
-        base.Update(gameTime);
+         base.Update(gameTime);
       }
 
       private void SetBoundingBox() {
@@ -102,14 +102,14 @@ namespace MonoGame___Lab4 {
             collider = new BoundingBox(boxMin, boxMax);
          }
          else {
-               bSphere = new BoundingSphere();
-               foreach (ModelMesh mesh in objModel.Meshes) {
-                  if (bSphere.Radius == 0)
+            bSphere = new BoundingSphere();
+            foreach (ModelMesh mesh in objModel.Meshes) {
+               if (bSphere.Radius == 0)
                   bSphere = mesh.BoundingSphere;
-                  else
+               else
                   bSphere = BoundingSphere.CreateMerged(bSphere, mesh.BoundingSphere);
-               }
-            bSphere.Center = new Vector3(position.X,position.Y + 0.05f,position.Z);
+            }
+            bSphere.Center = new Vector3(position.X, position.Y + 0.05f, position.Z);
             bSphere.Radius *= 0.5f;
             Debug.WriteLine(bSphere.Radius + "   " + bSphere.Center);
          }
