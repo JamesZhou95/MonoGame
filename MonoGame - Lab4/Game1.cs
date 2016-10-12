@@ -14,7 +14,7 @@ namespace MonoGame___Lab4
       #region fields
       public static Random random = new Random();
       public static Model car, obs, rock;
-      public static Vector2 MAPSIZE = new Vector2(60, 60);
+      public static Vector2 MAPSIZE = new Vector2(20, 150);
       public static Song sFX;
       public static SoundEffect accelerateSFX;
       public static SoundEffect hit;
@@ -31,6 +31,7 @@ namespace MonoGame___Lab4
       private Camera cam;
       private Character main;
       private TexturePlane plane, plane2;
+      private Snowplow snowplow;
       private Spawner spawner;
       private Texture2D ground;
       private SpriteFont font;
@@ -59,7 +60,7 @@ namespace MonoGame___Lab4
             {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
             {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
             {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
-            {'r','-','-','-','-','-','-','-','-','S','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
             {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
             {'r','-','-','-','-','-','-','-','-','X','-','-','-','r'},
             {'r','-','-','-','-','-','-','-','r','-','r','-','-','r'},
@@ -79,7 +80,7 @@ namespace MonoGame___Lab4
             {'r','-','-','-','r','-','-','-','-','r','-','-','-','r'},
             {'r','-','-','r','-','-','-','-','r','r','r','-','-','r'},
             {'r','-','r','-','-','-','-','r','r','-','-','r','-','r'},
-            {'r','r','-','-','-','-','-','-','-','r','-','-','r','r'},
+            {'r','r','-','-','-','-','S','-','-','r','-','-','r','r'},
             {'r','r','r','r','r','r','r','r','r','r','r','r','r','r'}
          };
 
@@ -105,24 +106,19 @@ namespace MonoGame___Lab4
          //create new objects
          ResetGame();
 
-         var path = new PathFinding(MapArry);
-         var path = new PathFinding(MapArry);
+         //var path = new PathFinding(MapArry);
 
-         Console.WriteLine("start: " + startP.Z + " End: " + endP.Z);
-         var parent = path.FindPath(startP, endP, false);
+         //Console.WriteLine("start: " + startP.Z + " End: " + endP.Z);
+         //var parent = path.FindPath(startP, endP, false);
 
-         Console.WriteLine("Print path:" + MapArry[startP.Z, startP.X]);
-         Console.WriteLine("start: " + startP.Z + " End: " + endP.Z);
-         var parent = path.FindPath(startP, endP, false);
+         //Console.WriteLine("Print path:" + MapArry[startP.Z, startP.X]);
 
-         Console.WriteLine("Print path:" + MapArry[startP.Z, startP.X]);
-
-         while (parent != null)
-         {
-            Console.WriteLine("ok");
-            Console.WriteLine(parent.X + ", " + parent.Z);
-            parent = parent.ParentPoint;
-         }
+         //while (parent != null)
+         //{
+         //   Console.WriteLine("ok");
+         //   Console.WriteLine(parent.X + ", " + parent.Z);
+         //   parent = parent.ParentPoint;
+         //}
       }
 
       protected override void UnloadContent()
@@ -154,12 +150,7 @@ namespace MonoGame___Lab4
       private void ResetGame()
       {
 
-         main = new Character(this, car, Vector3.Zero, 12f, 0.02f, rotation);
-         plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
-         //plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE.Y)), 2);
-         cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
-         //spawner = new Spawner(this, main);
-         main = new Character(this, car, new Vector3(0, 0, 3), 12f, 0.02f, rotation);
+         main = new Character(this, car, new Vector3(0, 0, 4), 12f, 0.02f, rotation);
          plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
          //plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE.Y)), 2);
          cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
@@ -167,11 +158,8 @@ namespace MonoGame___Lab4
          spawner.Generate(MapArry,
          3,
          2);
-         main = new Character(this, car, Vector3.Zero, 12f, 0.02f, rotation);
-         plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
-         //plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE.Y)), 2);
-         cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
-         //spawner = new Spawner(this, main);
+         
+         snow
          GameOver = false;
          MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
