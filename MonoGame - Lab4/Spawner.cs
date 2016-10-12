@@ -37,8 +37,33 @@ namespace MonoGame___Lab4
          //   timeCount = 0; //reset timer
          //}
          //RemoveOutOfRange();  //remove bullets out of range
+      }
 
+      public void Generate(char[,] map, int sizeX, int sizeZ)
+      {
+         float xMin = -Game1.MAPSIZE.X * 0.95f;
+         float xMax = Game1.MAPSIZE.X * 0.95f;
+         float zMax = Game1.MAPSIZE.Y * 0.95f;
+         for (int z = 0; z < map.GetLength(0); z++)
+            for (int x = 0; x < map.GetLength(1); x++)
+            {
+               char number = map[z, x];
 
+               if (number.Equals('r'))
+               {
+                  Instantiate2(Game1.rock, new Vector3(x * sizeX - xMax, 0, z * sizeZ), new Vector2(0, 180), new Vector2(0.5f, 1f), ModelType.rock);
+               }
+               else if (number.Equals('X'))
+               {
+                  Console.WriteLine("found X");
+                  game.endP = new Point(x, z);
+               }
+               else if (number.Equals('S'))
+               {
+                  Console.WriteLine("found S");
+                  game.startP = new Point(x, z);
+               }
+            }
       }
 
       private void Instantiate2(

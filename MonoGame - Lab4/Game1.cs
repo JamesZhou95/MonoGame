@@ -141,6 +141,7 @@ namespace MonoGame___Lab4
             cam.Update(main.Position);
             main.Update(gameTime);
             plane.Update(main.Position);
+            snowplow.Update(gameTime);
             //plane2.Update(main.Position);
             //spawner.Update(gameTime);
          }
@@ -158,8 +159,8 @@ namespace MonoGame___Lab4
          spawner.Generate(MapArry,
          3,
          2);
-         
-         snow
+
+         snowplow = new Snowplow(this, car, startP.toVector3(), endP.toVector3(), 8f, 0.02f, Matrix.Identity, main);
          GameOver = false;
          MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
@@ -175,6 +176,7 @@ namespace MonoGame___Lab4
          //ob.Draw(cam);
          main.Draw(cam);
          plane.Draw(cam);
+         snowplow.Draw(cam);
          //plane2.Draw(cam);
 
          spriteBatch.Begin();
