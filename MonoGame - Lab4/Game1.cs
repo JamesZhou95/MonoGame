@@ -7,18 +7,25 @@ using System.Collections.Generic;
 using System;
 using System.Diagnostics;
 
-namespace MonoGame___Lab4 {
-   public class Game1 : Game {
-      #region variable
+namespace MonoGame___Lab4
+{
+   public class Game1 : Game
+   {
+      #region fields
       public static Random random = new Random();
-      public readonly static int MAPSIZE = 20;
-      public static Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
+      public static Model car, obs, rock;
+      public static Vector2 MAPSIZE = new Vector2(60, 60);
       public static Song sFX;
       public static SoundEffect accelerateSFX;
       public static SoundEffect hit;
       public static SoundEffect stop;
+      public static Matrix rotation = Matrix.CreateRotationY(MathHelper.ToRadians(180));
 
-      private bool gameOver;
+      public static char[,] MapArry;
+
+      public Point startP { get; set; }
+      public Point endP { get; set; }
+
       private GraphicsDeviceManager graphics;
       private SpriteBatch spriteBatch;
       private Camera cam;
@@ -27,31 +34,67 @@ namespace MonoGame___Lab4 {
       private Spawner spawner;
       private Texture2D ground;
       private SpriteFont font;
-      public static Model car, obs, rock;
       private Song bgm;
       #endregion
+      public bool GameOver { get; set; }
 
-      #region property
-      public bool GameOver { get { return gameOver; } set { gameOver = value; } }
-      #endregion
-
-      public Game1() {
+      public Game1()
+      {
          graphics = new GraphicsDeviceManager(this);
          Content.RootDirectory = "Content";
       }
 
+      protected override void Initialize()
+      {
+         MapArry = new char[,]
+         {
+            {'r','Z','r','r','r','r','r','r','r','r','r','r','r','r'},
+            {'W','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','S','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','-','X','-','-','-','r'},
+            {'r','-','-','-','-','-','-','-','r','-','r','-','-','r'},
+            {'r','-','-','-','-','-','-','r','r','-','r','-','-','r'},
+            {'r','-','-','-','-','-','-','-','r','-','r','-','-','r'},
+            {'r','-','-','-','-','-','-','-','r','-','r','-','-','r'},
+            {'r','-','-','-','-','-','-','r','-','-','r','-','-','r'},
+            {'r','-','-','-','-','-','r','-','-','-','-','-','-','r'},
+            {'r','-','-','-','-','r','-','-','-','-','-','r','-','r'},
+            {'r','-','-','-','r','-','-','-','r','-','-','r','-','r'},
+            {'r','-','-','r','-','-','-','r','r','-','-','r','-','r'},
+            {'r','-','r','-','-','-','-','-','-','-','-','r','-','r'},
+            {'r','-','-','r','-','-','-','-','-','-','-','-','r','r'},
+            {'r','-','-','-','r','r','-','-','r','r','-','-','-','r'},
+            {'r','-','-','-','-','r','-','-','r','-','r','r','-','r'},
+            {'r','-','-','-','-','r','-','-','r','-','-','-','-','r'},
+            {'r','-','-','-','r','-','-','-','-','r','-','-','-','r'},
+            {'r','-','-','r','-','-','-','-','r','r','r','-','-','r'},
+            {'r','-','r','-','-','-','-','r','r','-','-','r','-','r'},
+            {'r','r','-','-','-','-','-','-','-','r','-','-','r','r'},
+            {'r','r','r','r','r','r','r','r','r','r','r','r','r','r'}
+         };
 
+         Console.WriteLine("test: " + MapArry[1, 0]);
 
-      protected override void Initialize() {
          base.Initialize();
       }
 
-      protected override void LoadContent() {
+      protected override void LoadContent()
+      {
          spriteBatch = new SpriteBatch(GraphicsDevice);
-         ground = Content.Load<Texture2D>("Textures/snow");
-         car = Content.Load<Model>("Models/car");
-         obs = Content.Load<Model>("Models/bullet");
-         rock = Content.Load<Model>("Models/rock");
+         ground = Content.Load<Texture2D>("snow");
+         car = Content.Load<Model>("car2");
+         obs = Content.Load<Model>("bullet");
+         rock = Content.Load<Model>("rock");
          sFX = Content.Load<Song>("Sounds/carExplodeSFX");
          accelerateSFX = Content.Load<SoundEffect>("Sounds/carAccelerateSFX");
          hit = Content.Load<SoundEffect>("Sounds/Hit");
@@ -61,52 +104,90 @@ namespace MonoGame___Lab4 {
 
          //create new objects
          ResetGame();
+
+         var path = new PathFinding(MapArry);
+         var path = new PathFinding(MapArry);
+
+         Console.WriteLine("start: " + startP.Z + " End: " + endP.Z);
+         var parent = path.FindPath(startP, endP, false);
+
+         Console.WriteLine("Print path:" + MapArry[startP.Z, startP.X]);
+         Console.WriteLine("start: " + startP.Z + " End: " + endP.Z);
+         var parent = path.FindPath(startP, endP, false);
+
+         Console.WriteLine("Print path:" + MapArry[startP.Z, startP.X]);
+
+         while (parent != null)
+         {
+            Console.WriteLine("ok");
+            Console.WriteLine(parent.X + ", " + parent.Z);
+            parent = parent.ParentPoint;
+         }
       }
 
-      protected override void UnloadContent() {
+      protected override void UnloadContent()
+      {
 
       }
 
-      protected override void Update(GameTime gameTime) {
+      protected override void Update(GameTime gameTime)
+      {
          if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-         if (Keyboard.GetState().IsKeyDown(Keys.Enter) && gameOver)
+         if (Keyboard.GetState().IsKeyDown(Keys.Enter) && GameOver)
             ResetGame();
 
-         if (!gameOver) {
-            foreach (var ob in spawner.Obstacles)
-               ob.Update(gameTime);
+         if (!GameOver)
+         {
+            //foreach (var ob in spawner.Obstacles)
+            //ob.Update(gameTime);
             cam.Update(main.Position);
             main.Update(gameTime);
             plane.Update(main.Position);
-            plane2.Update(main.Position);
-            spawner.Update(gameTime);
+            //plane2.Update(main.Position);
+            //spawner.Update(gameTime);
          }
          base.Update(gameTime);
       }
 
-      private void ResetGame() {
+      private void ResetGame()
+      {
+
          main = new Character(this, car, Vector3.Zero, 12f, 0.02f, rotation);
          plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
-         plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE)), 2);
+         //plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE.Y)), 2);
+         cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
+         //spawner = new Spawner(this, main);
+         main = new Character(this, car, new Vector3(0, 0, 3), 12f, 0.02f, rotation);
+         plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
+         //plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE.Y)), 2);
          cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
          spawner = new Spawner(this, main);
-         gameOver = false;
+         spawner.Generate(MapArry,
+         3,
+         2);
+         main = new Character(this, car, Vector3.Zero, 12f, 0.02f, rotation);
+         plane = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.Identity, 1);
+         //plane2 = new TexturePlane(GraphicsDevice, ground, MAPSIZE, Matrix.CreateTranslation(new Vector3(0, 0, MAPSIZE.Y)), 2);
+         cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
+         //spawner = new Spawner(this, main);
+         GameOver = false;
          MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
          MediaPlayer.IsRepeating = true;
          SoundEffect.MasterVolume = 0.05f;
       }
 
-      protected override void Draw(GameTime gameTime) {
+      protected override void Draw(GameTime gameTime)
+      {
          GraphicsDevice.Clear(Color.WhiteSmoke);
 
-         foreach (var ob in spawner.Obstacles)
-            ob.Draw(cam);
+         //foreach (var ob in spawner.Obstacles)
+         //ob.Draw(cam);
          main.Draw(cam);
          plane.Draw(cam);
-         plane2.Draw(cam);
+         //plane2.Draw(cam);
 
          spriteBatch.Begin();
          spriteBatch.DrawString(font, "Distance: " + main.Position.Z.ToString().Split('.')[0] + "M", new Vector2(10, 10), Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);

@@ -1,19 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MonoGame___Lab4 {
-   class TexturePlane{
+namespace MonoGame___Lab4
+{
+   class TexturePlane
+   {
       private GraphicsDevice graphics;
       private VertexPositionTexture[] verts;
       private VertexBuffer vertexBuffer;
       private BasicEffect effect;
       private Matrix world;
       private Texture2D texture;
-      private int size;
+      private Vector2 size;
       private Vector3 translation;
       private float scale;
 
-      public TexturePlane(GraphicsDevice graphics, Texture2D texture, int size, Matrix world,float scale) {
+      public TexturePlane(GraphicsDevice graphics, Texture2D texture, Vector2 size, Matrix world, float scale)
+      {
          this.graphics = graphics;
          this.texture = texture;
          this.world = world;
@@ -21,10 +24,10 @@ namespace MonoGame___Lab4 {
          this.scale = scale;
 
          verts = new VertexPositionTexture[4];
-         verts[0] = new VertexPositionTexture(new Vector3(-size, 0, size), new Vector2(0, size));
-         verts[1] = new VertexPositionTexture(new Vector3(-size, 0, -size), new Vector2(0, 0));
-         verts[2] = new VertexPositionTexture(new Vector3(size, 0, size), new Vector2(size, 0));
-         verts[3] = new VertexPositionTexture(new Vector3(size, 0, -size), new Vector2(size, size));
+         verts[0] = new VertexPositionTexture(new Vector3(-size.X, 0, size.Y), new Vector2(0, size.Y));
+         verts[1] = new VertexPositionTexture(new Vector3(-size.X, 0, -size.Y), new Vector2(0, 0));
+         verts[2] = new VertexPositionTexture(new Vector3(size.X, 0, size.Y), new Vector2(size.Y, 0));
+         verts[3] = new VertexPositionTexture(new Vector3(size.X, 0, -size.Y), new Vector2(size.Y, size.Y));
 
          vertexBuffer = new VertexBuffer(graphics, typeof(VertexPositionTexture), verts.Length, BufferUsage.None);
          vertexBuffer.SetData(verts);
@@ -32,13 +35,15 @@ namespace MonoGame___Lab4 {
          effect = new BasicEffect(graphics);
       }
 
-      public void Update(Vector3 target) {
+      public void Update(Vector3 target)
+      {
          //swap between another plane to create infinity view
-         if(target.Z > translation.Z + size * scale -5f)
-            translation.Z += size*2;
+         if (target.Z > translation.Z + size.X * scale - 5f)
+            translation.Z += size.X * 2;
       }
 
-      public void Draw(Camera camera) {
+      public void Draw(Camera camera)
+      {
          effect.World = world * Matrix.CreateTranslation(translation);
          effect.TextureEnabled = true;
          effect.Texture = texture;

@@ -6,9 +6,10 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 
 
-namespace MonoGame___Lab4 {
-   class Character : GameComponent {
-      #region variable
+namespace MonoGame___Lab4
+{
+   class Character : GameComponent
+   {
       private Model objModel;
       private Matrix worldMatrix, orientation;
       private Vector3 position;
@@ -18,30 +19,32 @@ namespace MonoGame___Lab4 {
       private float moveSpeed, originalSpeed;
       private BoundingBox collider;
       private Game1 game;
-      #endregion
-      #region  property
-      public Vector3 Position {
+
+      public int Life { get; set; }
+
+      public Vector3 Position
+      {
          get { return position; }
-         set {
+         set
+         {
             position = value;
             UpdateLookAt();
          }
       }
 
-      public Vector3 Rotation {
+      public Vector3 Rotation
+      {
          get { return rotation; }
-         set {
+         set
+         {
             rotation = value;
             UpdateLookAt();
          }
       }
 
-      public int Life { get; private set; }
-
-      #endregion
-
       //create new character/obstacles
-      public Character(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world) : base(game) {
+      public Character(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world) : base(game)
+      {
          objModel = model;
          position = pos;
          orientation = world;
@@ -53,63 +56,91 @@ namespace MonoGame___Lab4 {
       }
 
       //move character to position
-      private void MoveTo(Vector3 pos, Vector3 rot) {
+      private void MoveTo(Vector3 pos, Vector3 rot)
+      {
          Position = pos;
          Rotation = rot;
       }
 
       //Preview position to detect collision/boundary
-      private Vector3 PreviewMove(Vector3 amount) {
+      private Vector3 PreviewMove(Vector3 amount)
+      {
          Matrix rotate = Matrix.CreateRotationY(rotation.Y);
          Vector3 movement = new Vector3(amount.X, amount.Y, amount.Z);
          movement = Vector3.Transform(movement, rotate);
          var previewPos = position + movement;
-         previewPos.X = MathHelper.Clamp(previewPos.X, -Game1.MAPSIZE * 0.9f, Game1.MAPSIZE * 0.9f);
+         previewPos.X = MathHelper.Clamp(previewPos.X, -Game1.MAPSIZE.X * 0.9f, Game1.MAPSIZE.X * 0.9f);
+         previewPos.Z = MathHelper.Clamp(previewPos.Z, -Game1.MAPSIZE.Y * 0.9f, Game1.MAPSIZE.Y * 0.9f);
          return previewPos;
       }
 
-      private void Move(Vector3 scale) {
+      private void Move(Vector3 scale)
+      {
          MoveTo(PreviewMove(scale), Rotation);
       }
 
       //change lookAt direction
-      private void UpdateLookAt() {
+      private void UpdateLookAt()
+      {
          Matrix rotationMatrix = Matrix.CreateRotationY(rotation.Y);
          Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotationMatrix);
          lookAt = position + lookAtOffset;
       }
 
       //keyboard input for main character(car)
-      private void MainInput(float deltaTime) {
+      private void MainInput(float deltaTime)
+      {
          KeyboardState ks = Keyboard.GetState();
          Vector3 moveVector = Vector3.Zero;
 
          //Up&Down for Speed control, Left&Right for Rotation(Limited 70*)
          #region Input
-         moveVector.Z = 1;
+         moveVector.Z = 0.5f;
 
-         if (ks.IsKeyDown(Keys.W)) {
+         if (ks.IsKeyDown(Keys.W))
+         {
             Game1.accelerateSFX.Play();
             if (moveSpeed < originalSpeed * 2f)
-               moveSpeed += 0.005f * moveSpeed;      //acceleration based on current speed
+               moveSpeed += 0.002f * moveSpeed;      //acceleration based on current speed
          }
-         else if (ks.IsKeyDown(Keys.S)) {
+         else if (ks.IsKeyDown(Keys.S))
+         {
             Game1.stop.Play();
             if (moveSpeed > originalSpeed * 0.5f)
                moveSpeed -= 0.075f;
          }
          else if (moveSpeed > originalSpeed)
-            moveSpeed -= 0.075f;
+            moveSpeed -= 0.05f;
          else if (moveSpeed < originalSpeed)
-            moveSpeed += 0.075f;
+            moveSpeed += 0.05f;
 
-         if (ks.IsKeyDown(Keys.A) && rotation.Y < MathHelper.ToRadians(70f)) {
+         //if (ks.IsKeyDown(Keys.A)&&rotation.Y < MathHelper.ToRadians(70f)) {
+         //      rotation.Y += 0.03f;
+         //}
+
+         //if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f)) {
+         //   rotation.Y -= 0.03f;
+         //}
+
+         if (ks.IsKeyDown(Keys.A))
+         {
             rotation.Y += 0.03f;
          }
 
-         if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f)) {
+         if (ks.IsKeyDown(Keys.D))
+         {
             rotation.Y -= 0.03f;
          }
+
+         //if (ks.IsKeyDown(Keys.A))
+         //{
+         //   rotation.Y += 0.03f;
+         //}
+
+         //if (ks.IsKeyDown(Keys.D))
+         //{
+         //   rotation.Y -= 0.03f;
+         //}
 
          rotation.X -= 0.05f;    // rotation rate
          moveVector.Normalize();    //constant speed
@@ -127,48 +158,62 @@ namespace MonoGame___Lab4 {
          #endregion InputType1
       }
 
-      public override void Update(GameTime gameTime) {
+      public override void Update(GameTime gameTime)
+      {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
          MainInput(dt);
          SetCustomBoundingBox();
-
-         if (Life <= 0) {
-            MediaPlayer.Play(Game1.sFX);
-            MediaPlayer.IsRepeating = false;
-            game.GameOver = true;
-         }
 
          base.Update(gameTime);
       }
 
       //Collision Detection between other obastacles, try to use delegate method later
-      public void onCollisionBox(BoundingBox other) {
-         if (collider.Intersects(other)) {
+      public void onCollisionBox(BoundingBox other)
+      {
+         if (collider.Intersects(other))
+         {
             Life -= 5;      //lose Durability when hit by bullet
             Game1.hit.Play();
+            if (Life <= 0)
+            {
+               MediaPlayer.Volume = 1.0f;
+               MediaPlayer.Play(Game1.sFX);
+               MediaPlayer.IsRepeating = false;
+               game.GameOver = true;
+            }
          }
       }
 
-      public void onCollisionSphere(BoundingSphere other) {
-         if (collider.Intersects(other)) {
+      public void onCollisionSphere(BoundingSphere other)
+      {
+         if (collider.Intersects(other))
+         {
             Life = 0;       //die immediately when hit rocks
+            MediaPlayer.Volume = 1.0f;
+            MediaPlayer.Play(Game1.sFX);
+            MediaPlayer.IsRepeating = false;
+            game.GameOver = true;
          }
       }
 
       //create custom collider for collision detection
-      private void SetCustomBoundingBox() {
+      private void SetCustomBoundingBox()
+      {
          var boxMin = new Vector3(position.X - 0.7f, 0f, position.Z - 1.5f);
          var boxMax = new Vector3(position.X + 0.7f, 2f, position.Z + 1.8f);
 
          collider = new BoundingBox(boxMin, boxMax);
       }
 
-      public void Draw(Camera camera) {
+      public void Draw(Camera camera)
+      {
          Matrix[] transforms = new Matrix[objModel.Bones.Count];
          objModel.CopyAbsoluteBoneTransformsTo(transforms);
 
-         foreach (var mesh in objModel.Meshes) {
-            foreach (BasicEffect effect in mesh.Effects) {
+         foreach (var mesh in objModel.Meshes)
+         {
+            foreach (BasicEffect effect in mesh.Effects)
+            {
                effect.EnableDefaultLighting();
 
                var scale = transforms[mesh.ParentBone.Index] * Matrix.CreateScale(scaleSize);
