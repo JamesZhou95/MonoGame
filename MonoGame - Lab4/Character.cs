@@ -17,6 +17,7 @@ namespace MonoGame___Lab4
       private Vector3 lookAt;
       private float scaleSize;
       private float moveSpeed, originalSpeed;
+      private float wheelRotate;
       private BoundingBox collider;
       private Game1 game;
 
@@ -52,6 +53,7 @@ namespace MonoGame___Lab4
          scaleSize = scale;
          originalSpeed = speed;
          Life = 100;
+         wheelRotate = 0f;
          this.game = game;
       }
 
@@ -114,14 +116,25 @@ namespace MonoGame___Lab4
          else if (moveSpeed < originalSpeed)
             moveSpeed += 0.05f;
 
-         if (ks.IsKeyDown(Keys.A) && rotation.Y < MathHelper.ToRadians(70f))
+         if (ks.IsKeyDown(Keys.A) && rotation.Y < MathHelper.ToRadians(80f))
          {
             rotation.Y += 0.03f;
+            wheelRotate += 0.02f;
+         }
+         else
+         {
+            if (wheelRotate > 0f)
+               wheelRotate -= 0.05f;
          }
 
-         if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-70f))
+         if (ks.IsKeyDown(Keys.D) && rotation.Y > MathHelper.ToRadians(-80f))
          {
             rotation.Y -= 0.03f;
+            wheelRotate -= 0.02f;
+         }else
+         {
+            if (wheelRotate < 0f)
+               wheelRotate += 0.05f;
          }
 
          //if (ks.IsKeyDown(Keys.A))
@@ -151,10 +164,10 @@ namespace MonoGame___Lab4
 
          #region wheelsAnimation
          //left wheels rotation
+         objModel.Bones[11].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90) + wheelRotate) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[11].Transform.Translation);
          objModel.Bones[10].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[10].Transform.Translation);
-         objModel.Bones[11].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[11].Transform.Translation);
          //right wheels rotation
-         objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
+         objModel.Bones[9].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90) + wheelRotate) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[9].Transform.Translation);
          objModel.Bones[8].Transform = Matrix.CreateRotationY(MathHelper.ToRadians(-90)) * Matrix.CreateRotationX(rotation.X) * Matrix.CreateTranslation(objModel.Bones[8].Transform.Translation);
          #endregion
          #endregion InputType1
