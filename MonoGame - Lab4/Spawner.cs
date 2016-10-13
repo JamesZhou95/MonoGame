@@ -49,9 +49,8 @@ namespace MonoGame___Lab4
             {
                char number = map[z, x];
 
-               if (number.Equals('r'))
+               if (number.Equals('R'))
                {
-
                   Instantiate2(Game1.rock, new Vector3(x.toWorldX(), 0, z.toWorldZ()), new Vector2(0, 180), new Vector2(0.5f, 1f), ModelType.rock);
                }
                else if (number.Equals('X'))

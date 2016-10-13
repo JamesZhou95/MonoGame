@@ -24,19 +24,18 @@ namespace MonoGame___Lab4
          OpenList.Add(start);
          while (OpenList.Count != 0)
          {
-            //找出F值最小的点
             var tempStart = OpenList.MinPoint();
             OpenList.RemoveAt(0);
             CloseList.Add(tempStart);
-            //找出它相邻的点
+
             var surroundPoints = SurrroundPoints(tempStart, IsIgnoreCorner);
             foreach (Point point in surroundPoints)
             {
                if (OpenList.Exists(point))
-                  //计算G值, 如果比原来的大, 就什么都不做, 否则设置它的父节点为当前点,并更新G和F
+
                   FoundPoint(tempStart, point);
                else
-                  //如果它们不在开始列表里, 就加入, 并设置父节点,并计算GHF
+
                   NotFoundPoint(tempStart, end, point);
             }
             if (OpenList.Get(end) != null)
@@ -78,7 +77,6 @@ namespace MonoGame___Lab4
          return step * STEP;
       }
 
-      //获取某个点周围可以到达的点
       public List<Point> SurrroundPoints(Point point, bool IsIgnoreCorner)
       {
          var surroundPoints = new List<Point>(9);
@@ -92,10 +90,9 @@ namespace MonoGame___Lab4
          return surroundPoints;
       }
 
-      //在二维数组对应的位置不为障碍物
       private bool CanReach(int x, int z)
       {
-         return MapArray[z, x] != 'r';
+         return MapArray[z, x] != 'R';
       }
 
       public bool CanReach(Point start, int x, int z, bool IsIgnoreCorner)
@@ -106,7 +103,6 @@ namespace MonoGame___Lab4
          {
             if (Math.Abs(x - start.X) + Math.Abs(z - start.Z) == 1)
                return true;
-            //如果是斜方向移动, 判断是否 "拌脚"
             else
             {
                if (CanReach(Math.Abs(x - 1), z) && CanReach(x, Math.Abs(z - 1)))
@@ -118,7 +114,6 @@ namespace MonoGame___Lab4
       }
    }
 
-   //Point 类型
    public class Point
    {
       public Point ParentPoint { get; set; }
@@ -139,7 +134,6 @@ namespace MonoGame___Lab4
       }
    }
 
-   //对 List<Point> 的一些扩展方法
    public static class ListHelper
    {
       public static bool Exists(this List<Point> points, Point point)

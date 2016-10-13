@@ -115,8 +115,7 @@ namespace MonoGame___Lab4
             findPoints = false;
          }
 
-         if (points != null)
-            if (position.Z <= points.Z.toWorldZ())
+        if (points != null && position.Z <= points.Z.toWorldZ())
                points = points.ParentPoint;
 
          moveVector.Normalize();    //constant speed
@@ -170,7 +169,7 @@ namespace MonoGame___Lab4
 
       public static float toWorldX(this int points)
       {
-         return points * 3 - Game1.MAPSIZE.X * 0.95f;
+         return points * 2 - Game1.MAPSIZE.X * 0.95f;
       }
 
       public static float toWorldZ(this int points)
@@ -187,7 +186,7 @@ namespace MonoGame___Lab4
 
       public static int toPointX(this float points)
       {
-         return (int)(points + Game1.MAPSIZE.X * 0.95f) / 3;
+         return (int)(points + Game1.MAPSIZE.X * 0.95f) / 2;
       }
 
       public static int toPointY(this float points)
