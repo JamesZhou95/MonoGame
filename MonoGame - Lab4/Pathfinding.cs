@@ -19,6 +19,7 @@ namespace MonoGame___Lab4
          CloseList = new List<Point>(MapArray.Length);
       }
 
+      //Find the path from start to end
       public Point FindPath(Point start, Point end, bool IsIgnoreCorner)
       {
          OpenList.Add(start);
@@ -44,6 +45,7 @@ namespace MonoGame___Lab4
          return OpenList.Get(end);
       }
 
+      //calculate G/F for already found point
       private void FoundPoint(Point tempStart, Point point)
       {
          var G = CalcG(tempStart, point);
@@ -55,6 +57,7 @@ namespace MonoGame___Lab4
          }
       }
 
+      //calculate G/F for new point
       private void NotFoundPoint(Point tempStart, Point end, Point point)
       {
          point.ParentPoint = tempStart;
@@ -64,6 +67,7 @@ namespace MonoGame___Lab4
          OpenList.Add(point);
       }
 
+      //Find the G value, current to start position.
       private int CalcG(Point start, Point point)
       {
          int G = (Math.Abs(point.X - start.X) + Math.Abs(point.Z - start.Z)) == 2 ? STEP : OBLIQUE;
@@ -71,12 +75,14 @@ namespace MonoGame___Lab4
          return G + parentG;
       }
 
+      //Find the H value, from current position to End position
       private int CalcH(Point end, Point point)
       {
          int step = Math.Abs(point.X - end.X) + Math.Abs(point.Z - end.Z);
          return step * STEP;
       }
 
+      //Get all the surrounding points for the current point.
       public List<Point> SurrroundPoints(Point point, bool IsIgnoreCorner)
       {
          var surroundPoints = new List<Point>(9);
@@ -90,6 +96,7 @@ namespace MonoGame___Lab4
          return surroundPoints;
       }
 
+      //return ture if the point is walkable.
       private bool CanReach(int x, int z)
       {
          return MapArray[z, x] != 'R';
@@ -110,73 +117,6 @@ namespace MonoGame___Lab4
                else
                   return IsIgnoreCorner;
             }
-         }
-      }
-   }
-
-   public class Point
-   {
-      public Point ParentPoint { get; set; }
-      public int F { get; set; }  //F=G+H
-      public int G { get; set; }
-      public int H { get; set; }
-      public int X { get; set; }
-      public int Z { get; set; }
-
-      public Point(int x, int z)
-      {
-         this.X = x;
-         this.Z = z;
-      }
-      public void CalcF()
-      {
-         this.F = this.G + this.H;
-      }
-   }
-
-   public static class ListHelper
-   {
-      public static bool Exists(this List<Point> points, Point point)
-      {
-         foreach (Point p in points)
-            if ((p.X == point.X) && (p.Z == point.Z))
-               return true;
-         return false;
-      }
-
-      public static bool Exists(this List<Point> points, int x, int z)
-      {
-         foreach (Point p in points)
-            if ((p.X == x) && (p.Z == z))
-               return true;
-         return false;
-      }
-
-      public static Point MinPoint(this List<Point> points)
-      {
-         points = points.OrderBy(p => p.F).ToList();
-         return points[0];
-      }
-      public static void Add(this List<Point> points, int x, int z)
-      {
-         Point point = new Point(x, z);
-         points.Add(point);
-      }
-
-      public static Point Get(this List<Point> points, Point point)
-      {
-         foreach (Point p in points)
-            if ((p.X == point.X) && (p.Z == point.Z))
-               return p;
-         return null;
-      }
-
-      public static void Remove(this List<Point> points, int x, int z)
-      {
-         foreach (Point point in points)
-         {
-            if (point.X == x && point.Z == z)
-               points.Remove(point);
          }
       }
    }

@@ -12,7 +12,6 @@ namespace MonoGame___Lab4
       private Matrix world;
       private Texture2D texture;
       private Vector2 size;
-      private Vector3 translation;
       private float scale;
 
       public TexturePlane(GraphicsDevice graphics, Texture2D texture, Vector2 size, Matrix world, float scale)
@@ -35,16 +34,9 @@ namespace MonoGame___Lab4
          effect = new BasicEffect(graphics);
       }
 
-      public void Update(Vector3 target)
-      {
-         //swap between another plane to create infinity view
-         if (target.Z > translation.Z + size.X * scale - 5f)
-            translation.Z += size.X * 2;
-      }
-
       public void Draw(Camera camera)
       {
-         effect.World = world * Matrix.CreateTranslation(translation);
+         effect.World = world;
          effect.TextureEnabled = true;
          effect.Texture = texture;
          camera.Display(effect);

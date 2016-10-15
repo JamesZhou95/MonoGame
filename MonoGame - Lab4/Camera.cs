@@ -32,7 +32,8 @@ namespace MonoGame___Lab4 {
       }
 
       public Matrix View {
-         get {
+         get
+         {
             return Matrix.CreateLookAt(camPosition, camLookAt, Vector3.UnitY);
          }
       }

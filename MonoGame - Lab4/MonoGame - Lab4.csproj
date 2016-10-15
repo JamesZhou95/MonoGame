@@ -39,8 +39,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="GeneralStaticHelper.cs" />
+    <Compile Include="MapData.cs" />
     <Compile Include="Obstacles.cs" />
     <Compile Include="Pathfinding.cs" />
+    <Compile Include="Points.cs" />
     <Compile Include="Snowplow.cs" />
     <Compile Include="Spawner.cs" />
     <Compile Include="TexturePlane.cs" />

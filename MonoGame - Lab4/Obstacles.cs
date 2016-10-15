@@ -7,6 +7,7 @@ namespace MonoGame___Lab4
    enum ModelType { bullet, rock }
    class Obstacles : GameComponent
    {
+      #region fields
       private ModelType type;
       private Model objModel;
       private Matrix worldMatrix, orientation;
@@ -18,6 +19,8 @@ namespace MonoGame___Lab4
       private Character main;
       private BoundingBox collider;
       private BoundingSphere bSphere;
+      private Vector2 mapSize;
+      #endregion
 
       public Vector3 Position
       {
@@ -49,6 +52,7 @@ namespace MonoGame___Lab4
          scaleSize = scale;
          main = target;
          type = mType;
+         mapSize = MapData.MAPSIZE;
       }
 
       //move character to position
@@ -65,7 +69,7 @@ namespace MonoGame___Lab4
          Vector3 movement = new Vector3(amount.X, amount.Y, amount.Z);
          movement = Vector3.Transform(movement, rotate);
          var previewPos = position + movement;
-         previewPos.X = MathHelper.Clamp(previewPos.X, -Game1.MAPSIZE.X * 0.95f, Game1.MAPSIZE.X * 0.95f);
+         previewPos.X = MathHelper.Clamp(previewPos.X, -mapSize.X * 0.95f, mapSize.X * 0.95f);
          return previewPos;
       }
 
