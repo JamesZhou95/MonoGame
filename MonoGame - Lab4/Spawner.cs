@@ -9,12 +9,13 @@ namespace MonoGame___Lab4
    class Spawner
    {
       #region fields
-      private float timeCount;
+      private float timeCount,snowCount;
       private Character target;
       private Game1 game;
       #endregion
 
       public List<Obstacles> Obstacles { get; set; }
+      public List<Snowplow> Snowplows { get; set; }
 
       public Spawner(Game1 game, Character target)
       {
@@ -22,20 +23,30 @@ namespace MonoGame___Lab4
          this.game = game;
 
         Obstacles = new List<Obstacles>();
+         Snowplows = new List<Snowplow>();
       }
 
       //make camera follow main character
       public void Update(GameTime gameTime)
       {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-         timeCount += dt; //start count
+         timeCount += dt;
+         snowCount += dt;//start count
 
          if (timeCount > 0.5f)
          {   //bullet respwan rate 
-            Console.WriteLine("ok");
             Instantiate(Game1.obs, target.Position, new Vector2(3, 5), new Vector2(20, 40), new Vector2(1, 2),
                new Vector2(180, 180), new Vector2(0.2f, 0.2f), ModelType.bullet);
             timeCount = 0; //reset timer
+         }else if(snowCount > 1f && target.Position.Z < MapData.MAPSIZE.Y - 50)
+         {
+            var iniX = (float)Game1.random.Next(-(int)MapData.MAPSIZE.X, (int)MapData.MAPSIZE.X);
+            var iniZ = (target.Position.Z + 30);
+            if (MapData.MAPARRAY[iniZ.toPointY(),iniX.toPointX()] == '.')
+            {
+               Snowplows.Add(new Snowplow(game, Game1.car, new Vector3(iniX, 0,iniZ), 4f, 0.02f, Matrix.Identity, target));
+            }
+            snowCount = 0;
          }
          RemoveOutOfRange();  //remove bullets out of range
       }
@@ -89,6 +100,14 @@ namespace MonoGame___Lab4
             if (target.Position.Z - 15 > Obstacles[i].Position.Z)
             {
                Obstacles.RemoveAt(i);
+            }
+         }
+
+         for(int i = 0; i< Snowplows.Count; i++)
+         {
+            if (target.Position.Z - 10 > Snowplows[i].Position.Z)
+            {
+               Snowplows.RemoveAt(i);
             }
          }
       }

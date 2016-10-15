@@ -12,7 +12,6 @@ namespace MonoGame___Lab4
       private Vector3 position;
       private Vector3 rotation;
       private Vector3 lookAt;
-      private Vector3 endPos;
       private float scaleSize;
       private float moveSpeed;
       private Character main;
@@ -22,6 +21,7 @@ namespace MonoGame___Lab4
       private bool findPoints = true;
       private Point points;
       private Model objModel;
+      public string name;
       #endregion
 
       public Vector3 Position
@@ -45,7 +45,7 @@ namespace MonoGame___Lab4
       }
 
       //create new obstacles
-      public Snowplow(Game1 game, Model model, Vector3 pos, Vector3 end, float speed, float scale, Matrix world, Character target) : base(game)
+      public Snowplow(Game1 game, Model model, Vector3 pos, float speed, float scale, Matrix world, Character target) : base(game)
       {
          position = pos;
          orientation = world;
@@ -53,9 +53,9 @@ namespace MonoGame___Lab4
          scaleSize = scale;
          main = target;
          objModel = model;
-         endPos = end;
          mapSize = MapData.MAPSIZE;
          map = new PathFinding(MapData.MAPARRAY);
+         name = "car";
       }
 
       //move character to position
@@ -114,7 +114,7 @@ namespace MonoGame___Lab4
 
          if (findPoints)
          {
-            points = map.FindPath(main.Position.toPoint(), position.toPoint(), true);
+            points = map.FindPath(main.Position.toPoint(), position.toPoint(), false);
             findPoints = false;
          }
 
@@ -126,7 +126,7 @@ namespace MonoGame___Lab4
          Move(moveVector);
 
          SetBoundingBox();
-         main.onCollisionBox(collider);
+         main.onCollisionBoxCar(collider);
          base.Update(gameTime);
       }
 

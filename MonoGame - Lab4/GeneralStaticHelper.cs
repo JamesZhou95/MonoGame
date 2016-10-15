@@ -86,5 +86,6 @@ namespace MonoGame___Lab4
       {
          return (int)points / 2;
       }
+
    }
 }

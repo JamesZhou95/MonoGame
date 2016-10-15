@@ -74,7 +74,6 @@ namespace MonoGame___Lab4
          movement = Vector3.Transform(movement, rotate);
          var previewPos = position + movement;
          previewPos.X = MathHelper.Clamp(previewPos.X, -mapSize.X * 0.9f, mapSize.X * 0.9f);
-         previewPos.Z = MathHelper.Clamp(previewPos.Z, -mapSize.Y * 0.9f, mapSize.Y * 0.9f);
          return previewPos;
       }
 
@@ -176,6 +175,17 @@ namespace MonoGame___Lab4
                MediaPlayer.IsRepeating = false;
                game.GameOver = true;
             }
+         }
+      }
+
+      public void onCollisionBoxCar(BoundingBox other)
+      {
+         if (collider.Intersects(other))
+         {
+            Life = 0;       //die immediately when hit rocks
+            MediaPlayer.Play(Game1.sFX);
+            MediaPlayer.IsRepeating = false;
+            game.GameOver = true;
          }
       }
 

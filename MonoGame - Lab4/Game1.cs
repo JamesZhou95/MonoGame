@@ -24,11 +24,12 @@ namespace MonoGame___Lab4
       private Camera cam;
       private Character main;
       private TexturePlane plane;
-      private Snowplow snowplow;
       private Texture2D ground;
       private SpriteFont font;
       private Song bgm;
       private MapData map;
+      private bool win = false;
+      private string text;
       #endregion
       #region Public Property
       public bool GameOver { get; set; }
@@ -80,8 +81,13 @@ namespace MonoGame___Lab4
          {
             main.Update(gameTime);
             map.Update(gameTime);
-            cam.Update(main.Position);         
-            //snowplow.Update(gameTime);
+            cam.Update(main.Position);
+         }
+
+         if(main !=null && main.Position.Z > MapData.MAPSIZE.Y - 10f)
+         {
+            GameOver = true;
+            win = true;
          }
 
          if (main != null && main.Position == Vector3.Zero)
@@ -96,8 +102,8 @@ namespace MonoGame___Lab4
          plane = new TexturePlane(GraphicsDevice, ground, MapData.MAPSIZE, Matrix.Identity, 1);
          map = new MapData(this,"MapData", main);
          cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
-         //snowplow = new Snowplow(this, car, startP.toVector3(), endP.toVector3(), 3f, 0.02f, Matrix.Identity, main);
          GameOver = false;
+         win = false;
          MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
          MediaPlayer.IsRepeating = true;
@@ -113,7 +119,6 @@ namespace MonoGame___Lab4
             map.Draw(cam);
             main.Draw(cam);
             plane.Draw(cam);
-            //snowplow.Draw(cam);
 
             spriteBatch.Begin();
             spriteBatch.DrawString(font, "Distance: " + main.Position.Z.ToString().Split('.')[0] + "M", new Vector2(10, 10), Color.Black, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
@@ -124,6 +129,17 @@ namespace MonoGame___Lab4
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
          }
+         else
+         {
+            if (win == false)
+               text = "     [Press 'Enter' to start the game]\n[Reach to the end to finish the game]";
+            else
+               text = "              Congratulations!\n[Press 'Enter' to restart the game]";
+            spriteBatch.Begin();
+            spriteBatch.DrawString(font, text, new Vector2(90, 200), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.End();
+         }
+
          base.Draw(gameTime);
       }
    }

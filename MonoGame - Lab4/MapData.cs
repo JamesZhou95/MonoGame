@@ -1,9 +1,5 @@
 ﻿using System.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Audio;
 
 namespace MonoGame___Lab4
 {
@@ -82,11 +78,15 @@ namespace MonoGame___Lab4
          sp.Update(gameTime);
          foreach (var ob in sp.Obstacles)
             ob.Update(gameTime);
+         foreach (var ob in sp.Snowplows)
+            ob.Update(gameTime);
       }
 
       public void Draw(Camera cam)
       {
          foreach (var ob in sp.Obstacles)
+            ob.Draw(cam);
+         foreach (var ob in sp.Snowplows)
             ob.Draw(cam);
       }
    }
