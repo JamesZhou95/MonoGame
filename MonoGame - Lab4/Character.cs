@@ -30,7 +30,6 @@ namespace MonoGame___Lab4
          set
          {
             position = value;
-            UpdateLookAt();
          }
       }
 
@@ -40,7 +39,6 @@ namespace MonoGame___Lab4
          set
          {
             rotation = value;
-            UpdateLookAt();
          }
       }
 
@@ -80,14 +78,6 @@ namespace MonoGame___Lab4
       private void Move(Vector3 scale)
       {
          MoveTo(PreviewMove(scale), Rotation);
-      }
-
-      //change lookAt direction
-      private void UpdateLookAt()
-      {
-         Matrix rotationMatrix = Matrix.CreateRotationY(rotation.Y);
-         Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotationMatrix);
-         lookAt = position + lookAtOffset;
       }
 
       //keyboard input for main character(car)
@@ -167,7 +157,7 @@ namespace MonoGame___Lab4
       {
          if (collider.Intersects(other))
          {
-            Life -= 5;      //lose Durability when hit by bullet
+            Life -= 3;      //lose Durability when hit by bullet
             Game1.hit.Play();
             if (Life <= 0)
             {

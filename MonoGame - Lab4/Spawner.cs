@@ -23,7 +23,7 @@ namespace MonoGame___Lab4
          this.game = game;
 
         Obstacles = new List<Obstacles>();
-         Snowplows = new List<Snowplow>();
+        Snowplows = new List<Snowplow>();
       }
 
       //make camera follow main character
@@ -31,14 +31,14 @@ namespace MonoGame___Lab4
       {
          float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
          timeCount += dt;
-         snowCount += dt;//start count
+         snowCount += dt;
 
-         if (timeCount > 0.5f)
-         {   //bullet respwan rate 
+         if (timeCount > 0.5f && target.Position.Z < MapData.MAPSIZE.Y - 30)
+         {  
             Instantiate(Game1.obs, target.Position, new Vector2(3, 5), new Vector2(20, 40), new Vector2(1, 2),
                new Vector2(180, 180), new Vector2(0.2f, 0.2f), ModelType.bullet);
             timeCount = 0; //reset timer
-         }else if(snowCount > 1f && target.Position.Z < MapData.MAPSIZE.Y - 50)
+         }else if(snowCount > 1f && target.Position.Z < MapData.MAPSIZE.Y - 30)
          {
             var iniX = (float)Game1.random.Next(-(int)MapData.MAPSIZE.X, (int)MapData.MAPSIZE.X);
             var iniZ = (target.Position.Z + 30);

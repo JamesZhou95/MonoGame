@@ -30,6 +30,7 @@ namespace MonoGame___Lab4
       private MapData map;
       private bool win = false;
       private string text;
+      private int level;
       #endregion
       #region Public Property
       public bool GameOver { get; set; }
@@ -46,6 +47,9 @@ namespace MonoGame___Lab4
       protected override void Initialize()
       {
          GameOver = true;
+         level = 1;
+         cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
+         
          base.Initialize();
       }
 
@@ -62,6 +66,7 @@ namespace MonoGame___Lab4
          stop = Content.Load<SoundEffect>("Sounds/stop");
          bgm = Content.Load<Song>("Sounds/BGM");
          font = Content.Load<SpriteFont>("Fonts/Arial");
+
       }
 
       protected override void UnloadContent()
@@ -71,11 +76,20 @@ namespace MonoGame___Lab4
 
       protected override void Update(GameTime gameTime)
       {
-         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed )
             Exit();
 
          if (Keyboard.GetState().IsKeyDown(Keys.Enter) && GameOver)
+         {
             ResetGame();
+            ResetGame();
+         }
+
+         if (Keyboard.GetState().IsKeyDown(Keys.Escape)&&level!=1)
+         {
+            level = 1;
+            ResetGame();
+         }
 
          if (!GameOver)
          {
@@ -84,7 +98,7 @@ namespace MonoGame___Lab4
             cam.Update(main.Position);
          }
 
-         if(main !=null && main.Position.Z > MapData.MAPSIZE.Y - 10f)
+         if(main !=null && main.Position.Z > MapData.MAPSIZE.Y)
          {
             GameOver = true;
             win = true;
@@ -98,13 +112,14 @@ namespace MonoGame___Lab4
 
       private void ResetGame()
       {
+         Console.WriteLine(MapData.MAPSIZE.Y);
          main = new Character(this, car, new Vector3(0, 0, 5), 8f, 0.02f, rotation);
+         map = new MapData(this, "MapData"+level, main);
          plane = new TexturePlane(GraphicsDevice, ground, MapData.MAPSIZE, Matrix.Identity, 1);
-         map = new MapData(this,"MapData", main);
-         cam = new Camera(this, new Vector3(0f, 15f, 12f), Vector3.Zero, 10);
          GameOver = false;
+         if (win && level!=4)
+            level++;
          win = false;
-         MediaPlayer.Volume = 0.6f;
          MediaPlayer.Play(bgm);
          MediaPlayer.IsRepeating = true;
          SoundEffect.MasterVolume = 0.05f;
@@ -132,11 +147,13 @@ namespace MonoGame___Lab4
          else
          {
             if (win == false)
-               text = "     [Press 'Enter' to start the game]\n[Reach to the end to finish the game]";
+               text = $"                         Level {level}\n          [Press 'Enter' to start game ]\n\n [Goal: Reach {50 + level * 50}M to finish the game]";
+            else if (level == 4)
+               text = "                 Congratulations!\n[Press 'Escape' to replay the game]";
             else
-               text = "              Congratulations!\n[Press 'Enter' to restart the game]";
+               text = $"                 Congratulations!\n[Press 'Enter' to start the game - Level {level+1}";
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, text, new Vector2(90, 200), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(font, text, new Vector2(GraphicsDevice.Viewport.Width / 2 - font.MeasureString(text).Length() / 2, GraphicsDevice.Viewport.Height / 3), Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
             spriteBatch.End();
          }
 

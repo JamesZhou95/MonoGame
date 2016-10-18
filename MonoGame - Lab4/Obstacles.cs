@@ -28,7 +28,6 @@ namespace MonoGame___Lab4
          set
          {
             position = value;
-            UpdateLookAt();
          }
       }
 
@@ -38,7 +37,6 @@ namespace MonoGame___Lab4
          set
          {
             rotation = value;
-            UpdateLookAt();
          }
       }
 
@@ -78,14 +76,6 @@ namespace MonoGame___Lab4
          MoveTo(PreviewMove(scale), Rotation);
       }
 
-      //change look at direction
-      private void UpdateLookAt()
-      {
-         Matrix rotationMatrix = Matrix.CreateRotationY(rotation.Y);
-         Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotationMatrix);
-         lookAt = position + lookAtOffset;
-      }
-
       //moving obstacles(bullets)
       private void Fire(float deltaTime)
       {
@@ -104,10 +94,6 @@ namespace MonoGame___Lab4
          Fire(dt);
 
          SetBoundingBox();
-         if (type == ModelType.bullet)
-            main.onCollisionBox(collider);
-         else
-            main.onCollisionSphere(bSphere);
 
          base.Update(gameTime);
       }
@@ -134,6 +120,16 @@ namespace MonoGame___Lab4
             bSphere.Center = new Vector3(position.X, position.Y + 0.05f, position.Z);
             bSphere.Radius *= scaleSize * 0.25f;
          }
+
+
+         if (position.Z < main.Position.Z + 3)
+         {
+            if (type == ModelType.bullet)
+               main.onCollisionBox(collider);
+            else
+               main.onCollisionSphere(bSphere);
+         }
+
       }
 
       public void Draw(Camera camera)

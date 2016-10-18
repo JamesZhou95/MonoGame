@@ -30,7 +30,6 @@ namespace MonoGame___Lab4
          set
          {
             position = value;
-            UpdateLookAt();
          }
       }
 
@@ -40,7 +39,6 @@ namespace MonoGame___Lab4
          set
          {
             rotation = value;
-            UpdateLookAt();
          }
       }
 
@@ -83,16 +81,6 @@ namespace MonoGame___Lab4
          MoveTo(PreviewMove(scale), Rotation);
       }
 
-      //change look at direction
-      private void UpdateLookAt()
-      {
-         // Matrix rotationMatrix = Matrix.CreateRotationY(rotation.Y);
-         var targetPos = (points != null) ? points.toVector3() : new Vector3(position.X, 0, position.Z - 10);
-         Matrix rotationMatrix = RotateToFace(position, targetPos, Vector3.Up);
-         Vector3 lookAtOffset = Vector3.Transform(Vector3.UnitZ, rotationMatrix);
-         lookAt = position + lookAtOffset;
-      }
-
       Matrix RotateToFace(Vector3 O, Vector3 P, Vector3 U)
       {
          Vector3 D = (O - P);
@@ -112,21 +100,13 @@ namespace MonoGame___Lab4
          Vector3 moveVector = Vector3.Zero;
          moveVector.Z = -1f;
 
-         if (findPoints)
-         {
-            points = map.FindPath(main.Position.toPoint(), position.toPoint(), false);
-            findPoints = false;
-         }
-
-        if (points != null && position.Z <= points.Z.toWorldZ())
-            points = points.ParentPoint;
+         SetPathFinding();
 
          moveVector.Normalize();    //constant speed
          moveVector *= dt * moveSpeed;
          Move(moveVector);
 
          SetBoundingBox();
-         main.onCollisionBoxCar(collider);
          base.Update(gameTime);
       }
 
@@ -136,6 +116,21 @@ namespace MonoGame___Lab4
          var boxMax = new Vector3(position.X + 0.6f, 2f, position.Z + 1.5f);
 
          collider = new BoundingBox(boxMin, boxMax);
+
+         if (position.Z < main.Position.Z + 3)
+            main.onCollisionBoxCar(collider);
+      }
+
+      private void SetPathFinding()
+      {
+         if (findPoints)
+         {
+            points = map.FindPath(main.Position.toPoint(), position.toPoint(), true);
+            findPoints = false;
+         }
+
+         if (points != null && position.Z <= points.Z.toWorldZ())
+            points = points.ParentPoint;
       }
 
       public void Draw(Camera camera)
