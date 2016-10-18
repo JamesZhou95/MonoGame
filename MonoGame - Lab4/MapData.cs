@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace MonoGame___Lab4
 {
@@ -80,6 +81,8 @@ namespace MonoGame___Lab4
             ob.Update(gameTime);
          foreach (var ob in sp.Snowplows)
             ob.Update(gameTime);
+         foreach (var ob in sp.Coins)
+            ob.Update(gameTime);
       }
 
       public void Draw(Camera cam)
@@ -87,6 +90,8 @@ namespace MonoGame___Lab4
          foreach (var ob in sp.Obstacles)
             ob.Draw(cam);
          foreach (var ob in sp.Snowplows)
+            ob.Draw(cam);
+         foreach (var ob in sp.Coins)
             ob.Draw(cam);
       }
    }

@@ -179,15 +179,27 @@ namespace MonoGame___Lab4
          }
       }
 
-      public void onCollisionSphere(BoundingSphere other)
+      public bool onCollisionSphere(BoundingSphere other)
       {
-         if (collider.Intersects(other))
+         if(collider.Intersects(other) && other.Radius == 0.2f)
          {
+            if (Life <= 70)
+               Life += 30;
+            else
+               Life = 100;
+
+            return true;
+         }
+         else if (collider.Intersects(other))
+         {
+            Console.WriteLine(other.ToString());
             Life = 0;       //die immediately when hit rocks
             MediaPlayer.Play(Game1.sFX);
             MediaPlayer.IsRepeating = false;
             game.GameOver = true;
+            return true;
          }
+         return false;
       }
 
       //create custom collider for collision detection

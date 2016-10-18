@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Coin.cs" />
     <Compile Include="GeneralStaticHelper.cs" />
     <Compile Include="MapData.cs" />
     <Compile Include="Obstacles.cs" />

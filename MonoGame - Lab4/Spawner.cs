@@ -16,14 +16,16 @@ namespace MonoGame___Lab4
 
       public List<Obstacles> Obstacles { get; set; }
       public List<Snowplow> Snowplows { get; set; }
+      public List<Coin> Coins { get; set; }
 
       public Spawner(Game1 game, Character target)
       {
          this.target = target;
          this.game = game;
 
-        Obstacles = new List<Obstacles>();
-        Snowplows = new List<Snowplow>();
+         Obstacles = new List<Obstacles>();
+         Snowplows = new List<Snowplow>();
+         Coins = new List<Coin>();
       }
 
       //make camera follow main character
@@ -45,6 +47,8 @@ namespace MonoGame___Lab4
             if (MapData.MAPARRAY[iniZ.toPointY(),iniX.toPointX()] == '.')
             {
                Snowplows.Add(new Snowplow(game, Game1.car, new Vector3(iniX, 0,iniZ), 4f, 0.02f, Matrix.Identity, target));
+               Coins.Add(new Coin(game, Game1.rock, new Vector3(iniX, 0.5f, iniZ), 0f, 0.2f, Matrix.Identity, target));
+               Console.WriteLine(Coins.Count);
             }
             snowCount = 0;
          }
@@ -108,6 +112,14 @@ namespace MonoGame___Lab4
             if (target.Position.Z - 10 > Snowplows[i].Position.Z)
             {
                Snowplows.RemoveAt(i);
+            }
+         }
+
+         for (int i = 0; i < Coins.Count; i++)
+         {
+            if (target.Position.Z - 10 > Coins[i].Position.Z)
+            {
+               Coins.RemoveAt(i);
             }
          }
       }

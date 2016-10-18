@@ -66,7 +66,6 @@ namespace MonoGame___Lab4
          stop = Content.Load<SoundEffect>("Sounds/stop");
          bgm = Content.Load<Song>("Sounds/BGM");
          font = Content.Load<SpriteFont>("Fonts/Arial");
-
       }
 
       protected override void UnloadContent()
@@ -112,7 +111,6 @@ namespace MonoGame___Lab4
 
       private void ResetGame()
       {
-         Console.WriteLine(MapData.MAPSIZE.Y);
          main = new Character(this, car, new Vector3(0, 0, 5), 8f, 0.02f, rotation);
          map = new MapData(this, "MapData"+level, main);
          plane = new TexturePlane(GraphicsDevice, ground, MapData.MAPSIZE, Matrix.Identity, 1);

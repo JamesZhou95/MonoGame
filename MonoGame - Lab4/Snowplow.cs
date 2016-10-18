@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Diagnostics;
-using System;
 
 namespace MonoGame___Lab4
 {
@@ -11,7 +9,6 @@ namespace MonoGame___Lab4
       private Matrix worldMatrix, orientation;
       private Vector3 position;
       private Vector3 rotation;
-      private Vector3 lookAt;
       private float scaleSize;
       private float moveSpeed;
       private Character main;
@@ -21,7 +18,6 @@ namespace MonoGame___Lab4
       private bool findPoints = true;
       private Point points;
       private Model objModel;
-      public string name;
       #endregion
 
       public Vector3 Position
@@ -53,7 +49,6 @@ namespace MonoGame___Lab4
          objModel = model;
          mapSize = MapData.MAPSIZE;
          map = new PathFinding(MapData.MAPARRAY);
-         name = "car";
       }
 
       //move character to position
